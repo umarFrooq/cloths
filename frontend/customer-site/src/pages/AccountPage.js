@@ -139,6 +139,7 @@ const AccountPage = () => {
     }
   }, [authLoading, isAuthenticated, navigate, location]);
 
+  // Removed redundant useEffect hook. The same logic is present on lines 101-105.
 
   if (!isAuthenticated || !user) { // Fallback for non-authenticated state
     // Should be handled by redirect in useEffect or ProtectedRoute
@@ -167,7 +168,7 @@ const AccountPage = () => {
       </Helmet>
       <Row>
         <Col md={3}>
-          <h4 className="mb-3">{t('accountPage.welcome', 'Welcome')}, {currentUser?.firstName || currentUser?.username}!</h4>
+          <h4 className="mb-3">{t('accountPage.welcome', 'Welcome')}, {user?.firstName || user?.username}!</h4>
           <Nav variant="pills" className="flex-column account-nav">
             <Nav.Item>
               <Nav.Link eventKey="profile" as={Link} to="#profile" active={location.hash === '#profile' || !location.hash}>
@@ -195,7 +196,7 @@ const AccountPage = () => {
           <Tab.Container id="account-tabs" defaultActiveKey={location.hash.substring(1) || 'profile'}>
             <Tab.Content>
               <Tab.Pane eventKey="profile">
-                <ProfileDetails user={currentUser} onUpdate={handleUserUpdate} t={t} />
+                <ProfileDetails user={user} t={t} />
               </Tab.Pane>
               <Tab.Pane eventKey="orders">
                 <OrderHistory />
