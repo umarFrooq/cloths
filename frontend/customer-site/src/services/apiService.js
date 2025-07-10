@@ -101,4 +101,25 @@ export const payOrder = (orderId, paymentData, token) => apiClient.put(`/orders/
 
 // Add other API functions as needed (e.g., Cart APIs when ready)
 
+// --- Cart APIs (Protected) ---
+export const getCart = (token) => apiClient.get('/cart', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const addItemToCart = (itemData, token) => apiClient.post('/cart/items', itemData, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const updateCartItemQuantity = (productId, quantityData, token) => apiClient.put(`/cart/items/${productId}`, quantityData, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const removeCartItem = (productId, token) => apiClient.delete(`/cart/items/${productId}`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const clearCart = (token) => apiClient.delete('/cart', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
 export default apiClient;
