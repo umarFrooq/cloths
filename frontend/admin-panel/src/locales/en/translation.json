@@ -1,0 +1,16 @@
+{
+  "adminPanelTitle": "Admin Panel - Mafrushat",
+  "dashboard": "Dashboard",
+  "products": "Products",
+  "categories": "Categories",
+  "orders": "Orders",
+  "users": "Users",
+  "analytics": "Analytics",
+  "settings": "Settings",
+  "logout": "Logout",
+  "welcomeAdmin": "Welcome, Admin!",
+  "toggleLanguage": "Switch to Arabic",
+  "currentLanguage": "Current Language: English",
+  "productManagement": "Product Management",
+  "categoryManagement": "Category Management"
+}

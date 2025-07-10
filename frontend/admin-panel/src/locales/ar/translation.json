@@ -1,0 +1,16 @@
+{
+  "adminPanelTitle": "لوحة التحكم - مفروشات",
+  "dashboard": "لوحة التحكم",
+  "products": "المنتجات",
+  "categories": "الأصناف",
+  "orders": "الطلبات",
+  "users": "المستخدمون",
+  "analytics": "التحليلات",
+  "settings": "الإعدادات",
+  "logout": "تسجيل الخروج",
+  "welcomeAdmin": "أهلاً بك أيها المدير!",
+  "toggleLanguage": "Switch to English",
+  "currentLanguage": "اللغة الحالية: العربية",
+  "productManagement": "إدارة المنتجات",
+  "categoryManagement": "إدارة الأصناف"
+}
