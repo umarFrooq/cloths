@@ -32,6 +32,7 @@ const GlobalNavbar = () => {
   };
 
   return (
+   
     <Navbar expand="lg" className={`global-navbar fixed-top ${currentLang === 'ar' ? 'rtl' : 'ltr'}`} dir={currentLang === 'ar' ? 'rtl' : 'ltr'}>
       <Container fluid>
         <LinkContainer to="/">
