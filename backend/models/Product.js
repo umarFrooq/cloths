@@ -75,6 +75,16 @@ const ProductSchema = new Schema({
     type: Boolean,
     default: true,
   },
+  averageRating: {
+    type: Number,
+    min: [0, 'Rating must be at least 0'],
+    max: [5, 'Rating cannot be more than 5'],
+    default: 0,
+  },
+  numReviews: {
+    type: Number,
+    default: 0,
+  },
   // Optional: Dimensions, weight for shipping
   // weight: { type: Number },
   // dimensions: {

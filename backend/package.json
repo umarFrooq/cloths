@@ -16,7 +16,9 @@
     "coveragePathIgnorePatterns": [
       "/node_modules/"
     ],
-    "setupFilesAfterEnv": ["./tests/setup.js"]
+    "setupFilesAfterEnv": [
+      "./tests/setup.js"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -29,7 +31,8 @@
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.2"
+    "mongoose": "^8.16.2",
+    "nodemailer": "^7.0.5"
   },
   "devDependencies": {
     "concurrently": "^9.2.0",

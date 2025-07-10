@@ -25,15 +25,51 @@ const UserSchema = new mongoose.Schema({
     minlength: [6, 'Password must be at least 6 characters long.'],
     select: false, // Do not return password by default when querying users
   },
+  firstName: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'First name cannot be more than 50 characters.']
+  },
+  lastName: {
+    type: String,
+    trim: true,
+    maxlength: [50, 'Last name cannot be more than 50 characters.']
+  },
   role: {
     type: String,
-    enum: ['admin', 'editor'], // Example roles
-    default: 'editor',
+    enum: ['admin', 'editor', 'customer'], // Added 'customer' role
+    default: 'customer', // Default new sign-ups to 'customer'
   },
-  // You might add fields like:
-  // firstName: { type: String, trim: true },
-  // lastName: { type: String, trim: true },
-  // isActive: { type: Boolean, default: true }, // To disable user accounts
+  isActive: { // To disable user accounts
+    type: Boolean,
+    default: true
+  },
+  // For customers, could add:
+  // phone: { type: String, trim: true },
+  // addresses: [AddressSchema] // (If creating a sub-schema for addresses)
+  passwordResetToken: String,
+  passwordResetExpire: Date,
+  cart: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId, // Corrected: mongoose.Schema
+        ref: 'Product',
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: [1, 'Quantity cannot be less than 1.'],
+        default: 1,
+      },
+      // Storing price here is optional, could fetch from Product on cart load.
+      // Storing it can be useful if prices change and you want to honor price at time of adding to cart.
+      // For simplicity now, we'll fetch price from Product.
+      // name_en: String, // Optional: for quicker display without populating product
+      // name_ar: String,
+      // image: String, // Optional
+    }
+  ]
 }, {
   timestamps: true,
 });
@@ -66,5 +102,22 @@ UserSchema.methods.matchPassword = async function(enteredPassword) {
 //     expiresIn: process.env.JWT_EXPIRE || '30d',
 //   });
 // };
+
+// Generate and hash password reset token
+UserSchema.methods.getResetPasswordToken = function() {
+  // Generate token
+  const resetToken = require('crypto').randomBytes(20).toString('hex');
+
+  // Hash token and set to passwordResetToken field
+  this.passwordResetToken = require('crypto')
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  // Set expire time (e.g., 10 minutes)
+  this.passwordResetExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken; // Return the unhashed token (to be sent via email)
+};
 
 module.exports = mongoose.model('User', UserSchema);
