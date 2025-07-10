@@ -1,6 +1,6 @@
 import React from 'react';
-import React, { useState } from 'react'; // Added useState
-import React, { useState, useEffect } from 'react'; // Added useEffect
+// import React, { useState } from 'react'; // Added useState
+import { useState, useEffect } from 'react'; // Added useEffect
 import { Navbar, Nav, Container, Button, Form, InputGroup, Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faUser, faShoppingCart, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Added faSignOutAlt

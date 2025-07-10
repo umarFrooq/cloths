@@ -1,7 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 require('dotenv').config(); // To access JWT_SECRET
-
+const sendEmail = require('../utils/sendEmail'); // Import the email utility
+const crypto = require('crypto');
 // @desc    Login admin user & get token
 // @route   POST /api/auth/login
 // @access  Public
@@ -53,8 +54,9 @@ exports.getAllUsers = async (req, res, next) => {
   } catch (error) {
     console.error('Get All Users Error:', error);
     res.status(500).json({ success: false, message: 'Server Error' });
-const sendEmail = require('../utils/sendEmail'); // Import the email utility
-const crypto = require('crypto'); // For hashing reset token in resetPassword
+  }
+}
+ // For hashing reset token in resetPassword
 
 // ... (other controller functions like loginAdmin, registerUser, getMe, updateUserDetails) ...
 
