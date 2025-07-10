@@ -9,6 +9,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext'; // Import useCart
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher'; // Import LanguageSwitcher
 import './Navbar.css';
 
 // import logo from '../../assets/images/logo.png';
@@ -133,7 +134,7 @@ const GlobalNavbar = () => {
             </LinkContainer>
 
             {/* LanguageSwitcher can be placed here or elsewhere */}
-            {/* <LanguageSwitcher /> */}
+            <LanguageSwitcher />
           </Nav>
         </Navbar.Collapse>
       </Container>
