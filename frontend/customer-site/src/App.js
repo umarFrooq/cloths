@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom'; // Removed BrowserRouter as Router
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import Layout from './components/Layout/Layout';
@@ -40,7 +40,7 @@ function App() {
   const defaultTitle = t('companyName', 'مفروشات عروبة المنار');
 
   return (
-    <Router>
+    <>
       <Helmet titleTemplate={`%s | ${defaultTitle}`} defaultTitle={defaultTitle}>
         <meta name="description" content={t('siteDescription', 'High-quality furniture and decor.')} />
       </Helmet>
@@ -82,7 +82,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} /> {/* Catch-all for 404 */}
         </Routes>
       </Layout>
-    </Router>
+    </>
   );
 }
 
