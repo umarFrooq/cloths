@@ -335,7 +335,7 @@ const ProductDetailPage = () => {
           {cartError && <Alert variant="danger" className="mt-3">{cartError}</Alert>} {/* Display cart context error */}
 
           {/* Optional: SKU, Tags, etc. */}
-          {product.sku && <p className="text-muted small">SKU: {product.sku}</p>}
+          {product.sku && <p className="text-muted small">{t('productDetailPage.skuLabel', 'SKU')}: {product.sku}</p>}
            {product.tags_en && product.tags_en.length > 0 && (
             <p className="text-muted small">
                 {t('productDetailPage.tagsLabel', 'Tags')}: { (i18n.language === 'ar' && product.tags_ar ? product.tags_ar : product.tags_en).join(', ') }

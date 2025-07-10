@@ -138,10 +138,7 @@ const HomePage = () => {
       <HeroSection />
       <ValuePropsSection /> {/* Added this section */}
 
-      {/* Language switcher can be moved to header/footer if preferred */}
-      <div className="my-3 text-center">
-        <LanguageSwitcher />
-      </div>
+      {/* Language switcher removed from here, as it's in the Navbar */}
 
       <CategoriesDisplay />
 
