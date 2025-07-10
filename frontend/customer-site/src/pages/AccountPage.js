@@ -110,6 +110,14 @@ const AccountPage = () => {
       }
   }, [isAuthenticated, refreshUser]);
 
+  // If not authenticated after loading, redirect to login
+  // This check might be redundant if ProtectedRoute is used, but good as a safeguard
+  // Moved this hook before any early returns to satisfy rules-of-hooks
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      navigate('/account/login', { state: { from: location } });
+    }
+  }, [authLoading, isAuthenticated, navigate, location]);
 
   const handleLogout = async () => {
     await logout();
@@ -130,14 +138,6 @@ const AccountPage = () => {
       </Container>
     );
   }
-
-  // If not authenticated after loading, redirect to login
-  // This check might be redundant if ProtectedRoute is used, but good as a safeguard
-  useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      navigate('/account/login', { state: { from: location } });
-    }
-  }, [authLoading, isAuthenticated, navigate, location]);
 
   // Removed redundant useEffect hook. The same logic is present on lines 101-105.
 
