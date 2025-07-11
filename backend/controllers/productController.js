@@ -53,8 +53,9 @@ exports.getProducts = async (req, res) => {
     // Copy req.query
     const reqQuery = { ...req.query };
 
-    // Fields to exclude from filtering (like pagination, sort, select)
-    const removeFields = ['select', 'sort', 'page', 'limit'];
+    // Fields to exclude from filtering (like pagination, sort, select, lang)
+    // 'lang' is used for conditional logic (e.g., search fields) but not as a direct filter criterion on a 'lang' field.
+    const removeFields = ['select', 'sort', 'page', 'limit', 'lang'];
     removeFields.forEach(param => delete reqQuery[param]);
 
     // Create query string
