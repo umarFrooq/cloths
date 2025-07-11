@@ -106,15 +106,17 @@ export const getCart = (token) => apiClient.get('/cart', {
   headers: { Authorization: `Bearer ${token}` }
 });
 
-export const addItemToCart = (itemData, token) => apiClient.post('/cart/items', itemData, {
+// The backend route for adding items is POST /api/cart/
+export const addItemToCart = (itemData, token) => apiClient.post('/cart', itemData, {
   headers: { Authorization: `Bearer ${token}` }
 });
 
-export const updateCartItemQuantity = (productId, quantityData, token) => apiClient.put(`/cart/items/${productId}`, quantityData, {
+// The backend route for updating/deleting specific items is /api/cart/item/:productId
+export const updateCartItemQuantity = (productId, quantityData, token) => apiClient.put(`/cart/item/${productId}`, quantityData, { // This was correct
   headers: { Authorization: `Bearer ${token}` }
 });
 
-export const removeCartItem = (productId, token) => apiClient.delete(`/cart/items/${productId}`, {
+export const removeCartItem = (productId, token) => apiClient.delete(`/cart/item/${productId}`, { // Corrected from /items/ to /item/
   headers: { Authorization: `Bearer ${token}` }
 });
 
