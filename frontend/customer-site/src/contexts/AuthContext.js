@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
     loginUser as apiLoginUser,
     registerUser as apiRegisterUser,
     getMe as apiGetMe,
-    logoutUser as apiLogoutUser, // Assuming you'll add this to apiService
+    logoutUser as apiLogoutUser,
     updateUserDetails as apiUpdateUserDetails
 } from '../services/apiService'; // Adjust path as needed
 
@@ -13,117 +13,171 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('authToken'));
-    const [loading, setLoading] = useState(true); // For initial auth check
+    const [token, setToken] = useState(null); // Initialize token as null
+    const [authAttempted, setAuthAttempted] = useState(false); // Tracks if initial auth attempt is done
+    const [operationLoading, setOperationLoading] = useState(false); // For login, register, update operations
     const [error, setError] = useState(null);
 
-    // Effect to load user on initial app load if token exists
+    const initialLoadAttempted = useRef(false);
+
+    // Effect 1: Load token from localStorage and attempt initial auth ONCE on mount
     useEffect(() => {
-        const initializeAuth = async () => {
+        if (initialLoadAttempted.current) {
+            return; 
+        }
+        initialLoadAttempted.current = true;
+
+        const storedToken = localStorage.getItem('authToken');
+
+        if (storedToken) {
+            setToken(storedToken); 
+            // Validation will happen in the effect below that depends on `token`.
+            // Set authAttempted to false initially; validation effect will set it to true.
+            setAuthAttempted(false); 
+        } else {
+            setAuthAttempted(true); // No token, auth resolved as not logged in.
+            setUser(null); 
+        }
+    }, []); // Runs only once on mount
+
+    // Effect 2: Validate token when it's set (either from initial load or login/register)
+    useEffect(() => {
+        const validateToken = async () => {
             if (token) {
+                // Show loading if this is the initial validation pass.
+                if (!authAttempted) { 
+                    setOperationLoading(true); 
+                }
+
                 try {
-                    setLoading(true);
                     const response = await apiGetMe(token);
                     if (response.data && response.data.success) {
                         setUser(response.data.data);
-                        localStorage.setItem('authUser', JSON.stringify(response.data.data)); // Keep localStorage in sync
+                        // Ensure localStorage is consistent
+                        localStorage.setItem('authUser', JSON.stringify(response.data.data));
+                        localStorage.setItem('authToken', token);
                     } else {
-                        // Token might be invalid or expired
+                        setUser(null);
+                        setToken(null); 
                         localStorage.removeItem('authToken');
                         localStorage.removeItem('authUser');
-                        setToken(null);
-                        setUser(null);
                     }
                 } catch (err) {
+                    console.error("Token validation error:", err);
+                    setUser(null);
+                    setToken(null); 
                     localStorage.removeItem('authToken');
                     localStorage.removeItem('authUser');
-                    setToken(null);
-                    setUser(null);
-                    console.error("Initialization auth error:", err);
                 } finally {
-                    setLoading(false);
+                    if (!authAttempted) {
+                        setAuthAttempted(true); 
+                    }
+                    // Always turn off operationLoading if it was turned on by this effect.
+                    // Avoids issues if login/register also manage operationLoading.
+                    if (!authAttempted || operationLoading) { 
+                        setOperationLoading(false);
+                    }
                 }
             } else {
-                setLoading(false); // No token, not loading
+                // No token, or token was cleared.
+                setUser(null); // Ensure user is null.
+                if (!authAttempted) {
+                    setAuthAttempted(true); // Mark auth as attempted if it wasn't.
+                }
             }
         };
-        initializeAuth();
-    }, [token]); // Re-run if token changes (e.g. after login)
+        
+        // Run validation if there's a token to validate,
+        // OR if auth hasn't been attempted yet (to correctly set authAttempted from a no-token state).
+        if (token || !authAttempted) {
+            validateToken();
+        } else if (authAttempted && !token && user !== null) {
+            // Edge case: if somehow auth is attempted, token is null, but user isn't. Correct it.
+            setUser(null);
+        }
+
+    }, [token, authAttempted]); // React to token changes and initial authAttempted state.
 
     const login = useCallback(async (credentials) => {
+        setOperationLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            setError(null);
             const response = await apiLoginUser(credentials);
             if (response.data && response.data.success && response.data.token) {
-                setToken(response.data.token);
-                setUser(response.data.user);
                 localStorage.setItem('authToken', response.data.token);
                 localStorage.setItem('authUser', JSON.stringify(response.data.user));
+                // Setting token will trigger the validation useEffect.
+                // setUser optimistically, validation effect will confirm/override.
+                setUser(response.data.user); 
+                setToken(response.data.token); 
+                setAuthAttempted(true); // After login, auth is considered resolved.
+                // operationLoading will be handled by the useEffect triggered by setToken
                 return response.data;
             } else {
                 setError(response.data.message || 'Login failed.');
+                setOperationLoading(false);
                 throw new Error(response.data.message || 'Login failed.');
             }
         } catch (err) {
             setError(err.error || err.message || 'An error occurred during login.');
+            setOperationLoading(false);
             throw err;
-        } finally {
-            setLoading(false);
         }
     }, []);
 
     const register = useCallback(async (userData) => {
+        setOperationLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            setError(null);
             const response = await apiRegisterUser(userData);
             if (response.data && response.data.success && response.data.token) {
-                setToken(response.data.token);
-                setUser(response.data.user);
                 localStorage.setItem('authToken', response.data.token);
                 localStorage.setItem('authUser', JSON.stringify(response.data.user));
+                setUser(response.data.user);
+                setToken(response.data.token);
+                setAuthAttempted(true);
+                // operationLoading will be handled by the useEffect
                 return response.data;
             } else {
                 setError(response.data.message || 'Registration failed.');
+                setOperationLoading(false);
                 throw new Error(response.data.message || 'Registration failed.');
             }
         } catch (err) {
             setError(err.error || err.message || 'An error occurred during registration.');
+            setOperationLoading(false);
             throw err;
-        } finally {
-            setLoading(false);
         }
     }, []);
 
     const logout = useCallback(async () => {
-        setLoading(true);
+        setOperationLoading(true);
         try {
-            if (token) {
-                await apiLogoutUser(token); // Call backend logout if it exists and does something (e.g. invalidate session/token)
+            const currentTokenForApi = token || localStorage.getItem('authToken');
+            if (currentTokenForApi) {
+                await apiLogoutUser(currentTokenForApi); 
             }
         } catch (logoutError) {
-            console.error("Backend logout error (token might already be invalid):", logoutError);
-            // Still proceed with client-side logout
+            console.error("Backend logout error:", logoutError);
         } finally {
             setUser(null);
             setToken(null);
             localStorage.removeItem('authToken');
             localStorage.removeItem('authUser');
-            setLoading(false);
-            // Optionally redirect here or let component do it: navigate('/account/login');
+            setAuthAttempted(true); 
+            setOperationLoading(false);
         }
-    }, [token]);
+    }, [token]); // Added token dependency for currentTokenForApi logic
 
-    const updateUser = useCallback(async (userData) => {
-        if (!token) {
+    const updateUser = useCallback(async (userDataToUpdate) => {
+        if (!token) { 
             setError("Not authenticated to update user.");
             throw new Error("Not authenticated to update user.");
         }
+        setOperationLoading(true);
+        setError(null);
         try {
-            setLoading(true);
-            setError(null);
-            const response = await apiUpdateUserDetails(userData, token);
+            const response = await apiUpdateUserDetails(userDataToUpdate, token);
             if (response.data && response.data.success) {
                 setUser(response.data.data);
                 localStorage.setItem('authUser', JSON.stringify(response.data.data));
@@ -136,45 +190,51 @@ export const AuthProvider = ({ children }) => {
             setError(err.error || err.message || "An error occurred while updating details.");
             throw err;
         } finally {
-            setLoading(false);
+            setOperationLoading(false);
         }
     }, [token]);
 
-    // Function to refresh user data from backend
     const refreshUser = useCallback(async () => {
-        if (token) {
-            setLoading(true);
+        if (token) { 
+            setOperationLoading(true);
             try {
                 const response = await apiGetMe(token);
                 if (response.data && response.data.success) {
                     setUser(response.data.data);
                     localStorage.setItem('authUser', JSON.stringify(response.data.data));
                 } else {
-                    // If getMe fails, token might be invalid, so log out
-                    logout();
+                    await logout(); 
                 }
             } catch (err) {
                 console.error("Error refreshing user:", err);
-                logout(); // Logout on error
+                await logout(); 
             } finally {
-                setLoading(false);
+                setOperationLoading(false);
+            }
+        } else {
+             // If no token, ensure logged out state
+            if (user || localStorage.getItem('authToken')) {
+                await logout();
             }
         }
-    }, [token, logout]);
+    }, [token, logout, user]);
 
+
+    const isLoadingAuth = !authAttempted;
 
     const value = {
         user,
         token,
         isAuthenticated: !!token && !!user,
-        loading,
+        loading: isLoadingAuth, 
+        operationLoading,      
         error,
         login,
         register,
         logout,
         updateUser,
-        refreshUser, // Expose refreshUser
-        setError // Allow components to clear errors
+        refreshUser,
+        setError
     };
 
     return (
