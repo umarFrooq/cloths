@@ -3,7 +3,7 @@ const User = require('../models/User'); // Assuming your User model is here
 require('dotenv').config();
 
 // Protect routes: Verify token and attach user to request object
-exports.protect = async (req, res, next) => {
+let protect = async (req, res, next) => {
   let token;
 
   // Check for token in Authorization header (Bearer token)
@@ -39,7 +39,7 @@ exports.protect = async (req, res, next) => {
 };
 
 // Grant access to specific roles
-exports.authorize = (...roles) => {
+let authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user || !req.user.role) { // req.user should be set by 'protect' middleware
         return res.status(403).json({ success: false, message: 'User role not available. Ensure protect middleware runs first.' });
@@ -53,3 +53,7 @@ exports.authorize = (...roles) => {
     next();
   };
 };
+module.exports ={
+  protect,
+  authorize
+}

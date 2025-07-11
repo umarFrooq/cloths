@@ -1,5 +1,5 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { v4 as uuidv4 } from 'uuid'; // Attempt to import, will adjust if not found
+let  { S3Client, PutObjectCommand, DeleteObjectCommand } =require ("@aws-sdk/client-s3");
+let { v4 , uuidv4 } = require('uuid'); // Attempt to import, will adjust if not found
 
 // Configure AWS S3 Client
 // Ensure these environment variables are set:
@@ -20,7 +20,7 @@ const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
  * @returns {Promise<string>} - The S3 URL of the uploaded file.
  * @throws {Error} - If upload fails.
  */
-export const uploadFileToS3 = async (file) => {
+ const uploadFileToS3 = async (file) => {
   if (!S3_BUCKET_NAME) {
     throw new Error("S3_BUCKET_NAME environment variable is not set.");
   }
@@ -69,7 +69,7 @@ export const uploadFileToS3 = async (file) => {
  * @returns {Promise<void>}
  * @throws {Error} - If deletion fails or URL is invalid.
  */
-export const deleteFileFromS3 = async (fileUrl) => {
+ const deleteFileFromS3 = async (fileUrl) => {
   if (!S3_BUCKET_NAME) {
     throw new Error("S3_BUCKET_NAME environment variable is not set.");
   }
