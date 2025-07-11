@@ -157,7 +157,6 @@
     "login": "Login",
     "register": "Create Account",
     "cart": "Shopping Cart"
-    // Add productDetailPage title if needed, though it's dynamic in Helmet
   },
   "productDetailPage": {
     "error": {
