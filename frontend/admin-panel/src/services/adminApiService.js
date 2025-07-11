@@ -55,27 +55,21 @@ export const getAdminCategories = (params) => adminApiClient.get('/categories', 
 export const getAdminCategoryById = (id) => adminApiClient.get(`/categories/${id}`);
 
 export const createAdminCategory = (categoryData) => {
-  // categoryData is expected to be FormData if an image is involved
-  const headers = {};
+  const config = {};
   if (categoryData instanceof FormData) {
-    // Let Axios set the Content-Type header automatically for FormData
-    // headers['Content-Type'] = 'multipart/form-data'; // Axios does this better
-  } else {
-    headers['Content-Type'] = 'application/json';
+    config.headers = { 'Content-Type': 'multipart/form-data' };
   }
-  return adminApiClient.post('/categories', categoryData, { headers });
+  // If not FormData, it will use the default 'application/json' from adminApiClient instance's defaults
+  return adminApiClient.post('/categories', categoryData, config);
 };
 
 export const updateAdminCategory = (id, categoryData) => {
-  // categoryData is expected to be FormData if an image is involved
-  const headers = {};
+  const config = {};
   if (categoryData instanceof FormData) {
-    // Let Axios set the Content-Type header automatically for FormData
-    // headers['Content-Type'] = 'multipart/form-data'; // Axios does this better
-  } else {
-    headers['Content-Type'] = 'application/json';
+    config.headers = { 'Content-Type': 'multipart/form-data' };
   }
-  return adminApiClient.put(`/categories/${id}`, categoryData, { headers });
+  // If not FormData, it will use the default 'application/json' from adminApiClient instance's defaults
+  return adminApiClient.put(`/categories/${id}`, categoryData, config);
 };
 
 export const deleteAdminCategory = (id) => adminApiClient.delete(`/categories/${id}`);
