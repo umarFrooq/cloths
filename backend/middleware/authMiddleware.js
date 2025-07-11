@@ -53,7 +53,11 @@ let authorize = (...roles) => {
     next();
   };
 };
-module.exports ={
+// Specific middleware for admin role
+const admin = authorize('admin');
+
+module.exports = {
   protect,
-  authorize
-}
+  authorize,
+  admin, // Export admin middleware
+};
