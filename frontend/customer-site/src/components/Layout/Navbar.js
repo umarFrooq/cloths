@@ -38,8 +38,8 @@ const GlobalNavbar = () => {
       <Container fluid>
         <LinkContainer to="/">
           <Navbar.Brand href="/" className="navbar-brand-custom">
-            {/* <img src={logo} alt={t('nav.logoAlt')} height="40" /> */}
-            {t('companyName', 'مفروشات عروبة المنار')} {/* Fallback to Arabic name */}
+            <img src="https://alfaorigin.s3.eu-north-1.amazonaws.com/products/1752249595916-logoo.png" alt={t('nav.logoAlt', 'Company Logo')} height="40" />
+            {/* {t('companyName', 'مفروشات عروبة المنار')} Fallback to Arabic name */}
           </Navbar.Brand>
         </LinkContainer>
 
