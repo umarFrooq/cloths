@@ -15,8 +15,11 @@ const CategoryFormPage = () => {
     const { categoryId } = useParams();
     const isEditMode = Boolean(categoryId);
 
-    const initialFormData = { name_en: '', name_ar: '' };
+    const initialFormData = { name_en: '', name_ar: '', imageUrl: '' }; // Added imageUrl
     const [formData, setFormData] = useState(initialFormData);
+    const [imageFile, setImageFile] = useState(null); // For the selected image file
+    const [imagePreview, setImagePreview] = useState(''); // For displaying current or new image preview
+
     const [loading, setLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(isEditMode);
     const [error, setError] = useState(null);
@@ -36,8 +39,11 @@ const CategoryFormPage = () => {
                 setFormData({
                     name_en: categoryData.name_en || '',
                     name_ar: categoryData.name_ar || '',
-                    // Add other fields if category model expands e.g. description, image
+                    imageUrl: categoryData.imageUrl || '', // Store existing image URL
                 });
+                if (categoryData.imageUrl) {
+                    setImagePreview(categoryData.imageUrl); // Set preview for existing image
+                }
             } else {
                 throw new Error(response.data.message || `Failed to load category ${categoryId}`);
             }
@@ -58,6 +64,26 @@ const CategoryFormPage = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+            // Optionally, clear formData.imageUrl if you want to ensure the new file is treated as "the" image
+            // setFormData(prev => ({ ...prev, imageUrl: '' }));
+        } else {
+            // If no file is selected (e.g., user cancels file dialog), revert to original image if it exists
+            setImageFile(null);
+            setImagePreview(formData.imageUrl || '');
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setImageFile(null);
+        setImagePreview('');
+        setFormData(prev => ({ ...prev, imageUrl: '', removeImage: true })); // Signal backend to remove image
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -65,17 +91,36 @@ const CategoryFormPage = () => {
         setSuccess(null);
 
         try {
+            const dataToSend = new FormData();
+            dataToSend.append('name_en', formData.name_en);
+            dataToSend.append('name_ar', formData.name_ar);
+
+            if (imageFile) {
+                dataToSend.append('image', imageFile);
+            } else if (formData.removeImage && isEditMode) { // If image explicitly removed
+                dataToSend.append('removeImage', 'true');
+            }
+            // If !imageFile and !formData.removeImage, and isEditMode, the existing formData.imageUrl (if any) remains on backend unless replaced.
+
             let response;
             if (isEditMode) {
-                response = await updateAdminCategory(categoryId, formData);
+                response = await updateAdminCategory(categoryId, dataToSend);
             } else {
-                response = await createAdminCategory(formData);
+                response = await createAdminCategory(dataToSend);
             }
 
             if (response.data && response.data.success) {
                 setSuccess(isEditMode ? t('admin.categories.form.updateSuccess') : t('admin.categories.form.createSuccess'));
                 setTimeout(() => navigate('/admin/categories'), 2000);
-                if (!isEditMode) setFormData(initialFormData);
+                if (!isEditMode) {
+                    setFormData(initialFormData);
+                    setImageFile(null);
+                    setImagePreview('');
+                } else {
+                    // After successful update, refetch category data to get the latest imageUrl if it changed
+                    fetchCategory();
+                    setImageFile(null); // Clear selected file, preview will be updated by fetchCategory
+                }
             } else {
                 throw new Error(response.data.message || (isEditMode ? t('admin.categories.form.updateError') : t('admin.categories.form.createError')));
             }
@@ -126,7 +171,22 @@ const CategoryFormPage = () => {
                                 <Form.Control type="text" name="name_ar" value={formData.name_ar} onChange={handleChange} required dir="rtl" />
                             </Form.Group>
 
-                            {/* Add fields for description_en, description_ar, image if model expands */}
+                            <Form.Group className="mb-3" controlId="categoryImage">
+                                <Form.Label>{t('admin.categories.form.imageLabel', 'Category Image')}</Form.Label>
+                                <Form.Control type="file" accept="image/*" onChange={handleImageChange} />
+                                {imagePreview && (
+                                    <div className="mt-2">
+                                        <img src={imagePreview} alt={t('admin.categories.form.imagePreviewAlt', 'Preview')} style={{ maxHeight: '150px', maxWidth: '100%', borderRadius: '0.25rem' }} />
+                                        { (formData.imageUrl || imageFile) && ( // Show remove button if there's an existing or newly selected image
+                                            <Button variant="outline-danger" size="sm" className="d-block mt-2" onClick={handleRemoveImage}>
+                                                {t('admin.common.removeImageButton', 'Remove Image')}
+                                            </Button>
+                                        )}
+                                    </div>
+                                )}
+                            </Form.Group>
+
+                            {/* Add fields for description_en, description_ar if model expands */}
 
                             <Button variant="success" type="submit" disabled={loading || pageLoading}>
                                 {loading ? <Spinner as="span" animation="border" size="sm" /> : (isEditMode ? t('admin.categories.form.saveChangesButton') : t('admin.categories.form.createCategoryButton'))}

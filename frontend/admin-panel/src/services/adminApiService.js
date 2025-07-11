@@ -53,8 +53,31 @@ export const deleteAdminProduct = (id) => adminApiClient.delete(`/products/${id}
 // --- Category Management APIs ---
 export const getAdminCategories = (params) => adminApiClient.get('/categories', { params });
 export const getAdminCategoryById = (id) => adminApiClient.get(`/categories/${id}`);
-export const createAdminCategory = (categoryData) => adminApiClient.post('/categories', categoryData);
-export const updateAdminCategory = (id, categoryData) => adminApiClient.put(`/categories/${id}`, categoryData);
+
+export const createAdminCategory = (categoryData) => {
+  // categoryData is expected to be FormData if an image is involved
+  const headers = {};
+  if (categoryData instanceof FormData) {
+    // Let Axios set the Content-Type header automatically for FormData
+    // headers['Content-Type'] = 'multipart/form-data'; // Axios does this better
+  } else {
+    headers['Content-Type'] = 'application/json';
+  }
+  return adminApiClient.post('/categories', categoryData, { headers });
+};
+
+export const updateAdminCategory = (id, categoryData) => {
+  // categoryData is expected to be FormData if an image is involved
+  const headers = {};
+  if (categoryData instanceof FormData) {
+    // Let Axios set the Content-Type header automatically for FormData
+    // headers['Content-Type'] = 'multipart/form-data'; // Axios does this better
+  } else {
+    headers['Content-Type'] = 'application/json';
+  }
+  return adminApiClient.put(`/categories/${id}`, categoryData, { headers });
+};
+
 export const deleteAdminCategory = (id) => adminApiClient.delete(`/categories/${id}`);
 
 // --- Order Management APIs ---

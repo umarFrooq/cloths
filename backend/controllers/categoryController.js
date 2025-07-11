@@ -1,4 +1,5 @@
 const Category = require('../models/Category');
+const { uploadFileToS3, deleteFileFromS3 } = require('../utils/s3Service');
 
 // @desc    Create a new category
 // @route   POST /api/categories
@@ -17,12 +18,32 @@ exports.createCategory = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Category with this name already exists.' });
     }
 
-    category = new Category({ name_en, name_ar });
+    let imageUrl;
+    if (req.file) {
+      try {
+        imageUrl = await uploadFileToS3(req.file, 'categories');
+      } catch (s3Error) {
+        console.error('S3 Upload Error in createCategory:', s3Error);
+        // It's debatable whether to fail the whole category creation if S3 upload fails.
+        // For now, let's return an error.
+        return res.status(500).json({ success: false, message: 'Failed to upload category image to S3.', error: s3Error.message });
+      }
+    }
+
+    category = new Category({
+      name_en,
+      name_ar,
+      imageUrl, // This will be undefined if no file was uploaded, which is fine
+    });
     await category.save();
 
     res.status(201).json({ success: true, data: category });
   } catch (error) {
     console.error('Error creating category:', error);
+    // If an image was uploaded but category save failed, we might have an orphaned S3 file.
+    // Consider adding logic to delete from S3 if imageUrl is set and save fails.
+    // However, this can get complex (e.g. if DB error is for duplicate name, image might be for a legit new attempt).
+    // For now, keeping it simple. Advanced error handling can be added.
     res.status(500).json({ success: false, message: 'Server Error', error: error.message });
   }
 };
@@ -88,14 +109,46 @@ exports.updateCategory = async (req, res) => {
     }
 
     // Only update fields that were actually passed
-    if (req.body.name_en) category.name_en = req.body.name_en;
-    if (req.body.name_ar) category.name_ar = req.body.name_ar;
+    // Names are handled above with duplicate checks.
+    // if (req.body.name_en) category.name_en = req.body.name_en; // Already handled
+    // if (req.body.name_ar) category.name_ar = req.body.name_ar; // Already handled
+
+    if (req.file) {
+      // If a new file is uploaded, replace the old one
+      const oldImageUrl = category.imageUrl;
+
+      try {
+        category.imageUrl = await uploadFileToS3(req.file, 'categories');
+        // If upload is successful and there was an old image, delete it
+        if (oldImageUrl) {
+          // Intentionally not awaiting deleteFileFromS3 to avoid delaying response.
+          // Deletion failure will be logged by s3Service.
+          deleteFileFromS3(oldImageUrl).catch(s3DeleteError => {
+            console.error('Error deleting old category image from S3:', s3DeleteError);
+          });
+        }
+      } catch (s3Error) {
+        console.error('S3 Upload Error in updateCategory:', s3Error);
+        return res.status(500).json({ success: false, message: 'Failed to upload new category image to S3.', error: s3Error.message });
+      }
+    } else if (req.body.removeImage === 'true' && category.imageUrl) {
+      // Handle explicit image removal if a field like 'removeImage=true' is sent
+      const oldImageUrl = category.imageUrl;
+      category.imageUrl = undefined; // Or null
+      if (oldImageUrl) {
+        deleteFileFromS3(oldImageUrl).catch(s3DeleteError => {
+          console.error('Error deleting category image from S3 during removal:', s3DeleteError);
+        });
+      }
+    }
 
 
     const updatedCategory = await category.save();
     res.status(200).json({ success: true, data: updatedCategory });
   } catch (error) {
     console.error('Error updating category:', error);
+    // Orphaned file handling consideration: if new image was uploaded, but save fails,
+    // the new image is on S3. This is complex to handle transactionally without two-phase commits.
      if (error.kind === 'ObjectId') {
         return res.status(404).json({ success: false, message: 'Category not found (invalid ID).' });
     }
@@ -125,10 +178,21 @@ exports.deleteCategory = async (req, res) => {
     //   return res.status(400).json({ success: false, message: 'Cannot delete category. It has associated products.' });
     // }
 
+    const imageUrlToDelete = category.imageUrl;
+
     await category.deleteOne(); // Changed from .remove() which is deprecated
 
+    if (imageUrlToDelete) {
+      // Intentionally not awaiting deleteFileFromS3 to avoid delaying response.
+      // Deletion failure will be logged by s3Service.
+      deleteFileFromS3(imageUrlToDelete).catch(s3DeleteError => {
+        console.error('Error deleting category image from S3 during category deletion:', s3DeleteError);
+      });
+    }
+
     res.status(200).json({ success: true, message: 'Category deleted successfully.' });
-  } catch (error) {
+  } catch (error)
+ {
     console.error('Error deleting category:', error);
     if (error.kind === 'ObjectId') {
         return res.status(404).json({ success: false, message: 'Category not found (invalid ID).' });

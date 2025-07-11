@@ -79,6 +79,7 @@ const CategoryListPage = () => {
             <Table responsive hover className="admin-table mb-0">
               <thead>
                 <tr>
+                  <th>{t('admin.categories.list.headerImage', 'Image')}</th>
                   <th>{t('admin.categories.list.headerNameEn')}</th>
                   <th>{t('admin.categories.list.headerNameAr')}</th>
                   {/* Add other relevant headers like product count if available */}
@@ -88,6 +89,17 @@ const CategoryListPage = () => {
               <tbody>
                 {categories.length > 0 ? categories.map(category => (
                   <tr key={category._id}>
+                    <td>
+                      {category.imageUrl ? (
+                        <img
+                          src={category.imageUrl}
+                          alt={category.name_en || 'Category'}
+                          style={{ height: '50px', width: '50px', objectFit: 'cover', borderRadius: '0.25rem' }}
+                        />
+                      ) : (
+                        <span className="text-muted fst-italic">{t('admin.common.noImage', 'No Image')}</span>
+                      )}
+                    </td>
                     <td>{category.name_en}</td>
                     <td>{category.name_ar}</td>
                     <td>
@@ -112,7 +124,7 @@ const CategoryListPage = () => {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="3" className="text-center p-4">{t('admin.categories.list.noCategoriesFound')}</td>
+                    <td colSpan="4" className="text-center p-4">{t('admin.categories.list.noCategoriesFound')}</td>
                   </tr>
                 )}
               </tbody>

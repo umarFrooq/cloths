@@ -130,15 +130,15 @@ const ShopPage = () => {
   };
 
   return (
-    <Container className="my-0 shop-page">
+    <Container className="my-5 shop-page">
       <Helmet>
         <title>{t('pageTitles.shop', 'المتجــــــر')}</title>
       </Helmet>
-      {/* <Row className="mb-4">
+      <Row className="mb-4">
         <Col md={12}>
           <h1 className="page-main-title">{t('shopPage.title', 'المتجــــــر')}</h1>
         </Col>
-      </Row> */}
+      </Row>
 
       <Row className="mb-4 p-3 bg-light rounded">
         <Col md={4} className="mb-2 mb-md-0">

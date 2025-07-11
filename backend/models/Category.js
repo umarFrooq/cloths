@@ -19,6 +19,10 @@ const CategorySchema = new mongoose.Schema({
   // Optional: Add a description
   // description_en: { type: String, trim: true },
   // description_ar: { type: String, trim: true },
+  imageUrl: {
+    type: String,
+    trim: true, // Store the URL of the category image
+  },
 }, {
   timestamps: true, // Adds createdAt and updatedAt
 });

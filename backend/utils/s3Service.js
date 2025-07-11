@@ -17,10 +17,11 @@ const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
 /**
  * Uploads a file to AWS S3.
  * @param {Object} file - The file object (typically from multer, containing buffer and originalname).
+ * @param {string} [folderName='products'] - Optional folder name to store the file in S3.
  * @returns {Promise<string>} - The S3 URL of the uploaded file.
  * @throws {Error} - If upload fails.
  */
- const uploadFileToS3 = async (file) => {
+ const uploadFileToS3 = async (file, folderName = 'products') => {
   if (!S3_BUCKET_NAME) {
     throw new Error("S3_BUCKET_NAME environment variable is not set.");
   }
@@ -38,7 +39,9 @@ const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
   }
 
   const fileExtension = file.originalname.split('.').pop();
-  const uniqueKey = `products/${uniqueFilenameBase}-${file.originalname.replace(/ /g, '_')}`; // Basic sanitization
+  // Ensure folderName ends with a slash if it's not empty, otherwise, don't add a leading slash if folderName is empty.
+  const keyPrefix = folderName ? (folderName.endsWith('/') ? folderName : `${folderName}/`) : '';
+  const uniqueKey = `${keyPrefix}${uniqueFilenameBase}-${file.originalname.replace(/ /g, '_')}`; // Basic sanitization
 
   const params = {
     Bucket: S3_BUCKET_NAME,
