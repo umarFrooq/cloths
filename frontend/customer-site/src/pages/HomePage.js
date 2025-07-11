@@ -14,8 +14,10 @@ import { faMedal, faShippingFast, faShieldAlt, faTags } from '@fortawesome/free-
 const HeroSection = () => {
   const { t } = useTranslation();
   return (
-    <Container fluid className="text-center py-5 bg-light hero-section" style={{ backgroundImage: "url('https://via.placeholder.com/1920x600/CCCCCC/FFFFFF?text=Beautiful+Furniture+Background')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
-      <div className="hero-content" style={{backgroundColor: 'rgba(255,255,255,0.7)', padding: '2rem', borderRadius: '10px', display: 'inline-block'}}>
+    <Container fluid className="text-center py-5  hero-section" style={{ backgroundImage: "url('https://alfaorigin.s3.eu-north-1.amazonaws.com/products/1752247252748-Whisk_a846baeeaa.jpg')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
+      {/* <div className="hero-content" style={{backgroundColor: 'rgba(255,255,255,0.7)', padding: '2rem', borderRadius: '10px', display: 'inline-block'}}> */}
+            <div className="hero-content" style={{ padding: '2rem', borderRadius: '10px', display: 'inline-block'}}>
+
         <h1 className="display-4 fw-bold"> {t('home.heroTitle', 'احدث التصاميم')}</h1>
         <p className="lead fs-4 my-3">{t('home.heroSubtitle', 'مفروشات عروبة المنار وجهتك المثالية لشراء السجاد والموكيت والمجالس والستائر. جودة عالية وتصاميم مميزة تناسب كل الأذواق')}</p>
         <Button as={Link} to="/shop" variant="primary" size="lg">{t('home.heroButton', 'تفقد المتجر الان!')}</Button>
