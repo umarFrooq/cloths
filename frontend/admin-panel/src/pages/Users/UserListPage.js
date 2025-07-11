@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Container, Row, Col, Table, Button, Spinner, Alert, Badge, Form, Pagination } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Spinner, Alert, Form, Pagination } from 'react-bootstrap';
 // import { Link, useNavigate } from 'react-router-dom'; // For edit user page if created
 import { getAdminUsers /*, updateAdminUser (for role/status update) */ } from '../../services/adminApiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

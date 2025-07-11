@@ -19,7 +19,7 @@ const ProductListPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalProducts, setTotalProducts] = useState(0);
+  // const [totalProducts, setTotalProducts] = useState(0); // totalProducts seems unused
   const productsPerPage = 10;
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,7 +48,7 @@ const ProductListPage = () => {
       const response = await getAdminProducts(params);
       if (response.data && response.data.success) {
         setProducts(response.data.data);
-        setTotalProducts(response.data.totalProducts || 0);
+        // setTotalProducts(response.data.totalProducts || 0); // totalProducts seems unused
         setTotalPages(response.data.pagination?.next ? Math.ceil(response.data.totalProducts / productsPerPage) : currentPage);
          if (response.data.totalProducts && response.data.data.length > 0) {
              setTotalPages(Math.ceil(response.data.totalProducts / productsPerPage));

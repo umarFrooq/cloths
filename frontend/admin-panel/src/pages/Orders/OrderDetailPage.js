@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Container, Row, Col, Card, Spinner, Alert, Button, ListGroup, Table, Badge, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Spinner, Alert, Button, ListGroup, Badge, Form } from 'react-bootstrap';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getAdminOrderById, updateAdminOrderStatus, markOrderAsDelivered } from '../../services/adminApiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faPrint, faTruck, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPrint, faTruck } from '@fortawesome/free-solid-svg-icons';
 
 const OrderDetailPage = () => {
   const { t, i18n } = useTranslation();

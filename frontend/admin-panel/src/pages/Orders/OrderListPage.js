@@ -5,7 +5,7 @@ import { Container, Row, Col, Table, Button, Spinner, Alert, Pagination, Badge, 
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { getAdminOrders, updateAdminOrderStatus, markOrderAsDelivered } from '../../services/adminApiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faCheckCircle, faTruck } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faTruck } from '@fortawesome/free-solid-svg-icons';
 
 const OrderListPage = () => {
   const { t, i18n } = useTranslation();
@@ -18,7 +18,7 @@ const OrderListPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalOrders, setTotalOrders] = useState(0);
+  // const [totalOrders, setTotalOrders] = useState(0); // totalOrders seems unused
   const ordersPerPage = 10;
 
   // TODO: Add filters for status, date range, search by order ID or user
@@ -38,7 +38,7 @@ const OrderListPage = () => {
       const response = await getAdminOrders(params);
       if (response.data && response.data.success) {
         setOrders(response.data.data);
-        setTotalOrders(response.data.totalOrders || 0);
+        // setTotalOrders(response.data.totalOrders || 0); // totalOrders seems unused
          if (response.data.totalOrders && response.data.data.length > 0) {
            setTotalPages(Math.ceil(response.data.totalOrders / ordersPerPage));
          } else {

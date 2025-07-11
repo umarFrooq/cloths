@@ -9,7 +9,6 @@ import { faEdit, faTrashAlt, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const CategoryListPage = () => {
   const { t, i18n } = useTranslation();
-  const currentLang = i18n.language;
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState([]);
