@@ -60,12 +60,16 @@ const CategoriesDisplay = () => {
         {categories.map((category) => (
           <Col key={category._id} className="d-flex justify-content-center">
             <Card className="category-card h-100">
-              {/* Placeholder for category image - replace with actual image if available in model */}
               <Card.Img
                 variant="top"
-                src={`https://via.placeholder.com/300x200/EFEFEF/AAAAAA?text=${currentLang === 'ar' ? category.name_ar : category.name_en}`}
+                src={category.imageUrl || `https://via.placeholder.com/300x200/EFEFEF/AAAAAA?text=${encodeURIComponent(currentLang === 'ar' ? category.name_ar : category.name_en)}`}
                 alt={currentLang === 'ar' ? category.name_ar : category.name_en}
                 className="category-card-img"
+                // Add onError handler to fall back to placeholder if actual image fails to load
+                onError={(e) => {
+                  e.target.onerror = null; // Prevent infinite loop if placeholder also fails
+                  e.target.src = `https://via.placeholder.com/300x200/EFEFEF/AAAAAA?text=${encodeURIComponent(currentLang === 'ar' ? category.name_ar : category.name_en)}`;
+                }}
               />
               <Card.Body className="text-center d-flex flex-column">
                 <Card.Title className="category-card-title">
