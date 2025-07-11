@@ -13,6 +13,7 @@ import {
 
 const ProductFormPage = () => {
     const { t, i18n } = useTranslation();
+    const currentLang = i18n.language;
     const navigate = useNavigate();
     const { productId } = useParams(); // For editing existing product
     const isEditMode = Boolean(productId);

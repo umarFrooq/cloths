@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Container, Row, Col, Table, Button, Spinner, Alert, Pagination, InputGroup, Form } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Spinner, Alert, Pagination, InputGroup, Form, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAdminProducts, deleteAdminProduct } from '../../services/adminApiService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
