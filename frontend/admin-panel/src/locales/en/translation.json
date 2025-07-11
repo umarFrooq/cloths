@@ -12,5 +12,9 @@
   "toggleLanguage": "Switch to Arabic",
   "currentLanguage": "Current Language: English",
   "productManagement": "Product Management",
-  "categoryManagement": "Category Management"
+  "categoryManagement": "Category Management",
+  "adminPanel": {
+    "title": "Admin Panel",
+    "description": "Administration panel for the website."
+  }
 }

@@ -128,6 +128,9 @@ function App() {
           <meta name="description" content={t('adminPanel.description', 'Administration panel for the website.')} />
         </Helmet>
         <Routes>
+          {/* Redirect root to /admin */}
+          <Route path="/" element={<Navigate to="/admin" replace />} />
+
           <Route path="/admin/login" element={<AdminLoginPage />} />
 
           {/* Routes protected by AdminLayout and authentication */}

@@ -12,5 +12,9 @@
   "toggleLanguage": "Switch to English",
   "currentLanguage": "اللغة الحالية: العربية",
   "productManagement": "إدارة المنتجات",
-  "categoryManagement": "إدارة الأصناف"
+  "categoryManagement": "إدارة الأصناف",
+  "adminPanel": {
+    "title": "[ar] Admin Panel",
+    "description": "[ar] Administration panel for the website."
+  }
 }
