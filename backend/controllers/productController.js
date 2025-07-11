@@ -183,11 +183,12 @@ exports.getProductByIdentifier = async (req, res) => {
 const { deleteFileFromS3 } = require('../utils/s3Service'); // Import S3 service
 
 // @desc    Update a product
-// @route   PUT /api/products/:id
-// @access  Private/Admin (to be implemented)
+// @route   PUT /api/products/:identifier
+// @access  Private/Admin (or Editor)
 exports.updateProduct = async (req, res) => {
   try {
-    let product = await Product.findById(req.params.id);
+    // Use req.params.identifier, assuming it's the product ID for updates
+    let product = await Product.findById(req.params.identifier);
 
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found.' });
@@ -261,11 +262,12 @@ exports.updateProduct = async (req, res) => {
 };
 
 // @desc    Delete a product
-// @route   DELETE /api/products/:id
-// @access  Private/Admin (to be implemented)
+// @route   DELETE /api/products/:identifier
+// @access  Private/Admin
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    // Use req.params.identifier, assuming it's the product ID for deletions
+    const product = await Product.findById(req.params.identifier);
 
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found.' });
