@@ -72,7 +72,12 @@
         "tagsArLabel": "[ar] Tags (Arabic) (NEEDS TRANSLATION)",
         "isActiveLabel": "[ar] Product is Active (NEEDS TRANSLATION)",
         "saveChangesButton": "[ar] Save Changes (NEEDS TRANSLATION)",
-        "createProductButton": "[ar] Create Product (NEEDS TRANSLATION)"
+        "createProductButton": "[ar] Create Product (NEEDS TRANSLATION)",
+        "errorImagesUploading": "[ar] Some images are still uploading. Please wait. (NEEDS TRANSLATION)",
+        "selectImagesButton": "[ar] Select Images... (NEEDS TRANSLATION)",
+        "uploadErrorShort": "[ar] Error (NEEDS TRANSLATION)",
+        "imagesS3Tip": "[ar] Upload images directly. They will be saved to S3. (NEEDS TRANSLATION)",
+        "uploadErrorTooltip": "[ar] An unknown error occurred during upload. (NEEDS TRANSLATION)"
       },
       "list": {
         "errorFetchDefault": "[ar] Failed to load products. (NEEDS TRANSLATION)",

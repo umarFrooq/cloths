@@ -72,7 +72,12 @@
         "tagsArLabel": "Tags (Arabic)",
         "isActiveLabel": "Product is Active",
         "saveChangesButton": "Save Changes",
-        "createProductButton": "Create Product"
+        "createProductButton": "Create Product",
+        "errorImagesUploading": "Some images are still uploading. Please wait.",
+        "selectImagesButton": "Select Images...",
+        "uploadErrorShort": "Error",
+        "imagesS3Tip": "Upload images directly. They will be saved to S3.",
+        "uploadErrorTooltip": "An unknown error occurred during upload."
       },
       "list": {
         "errorFetchDefault": "Failed to load products.",

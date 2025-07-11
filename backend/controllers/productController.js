@@ -180,6 +180,8 @@ exports.getProductByIdentifier = async (req, res) => {
 };
 
 
+const { deleteFileFromS3 } = require('../utils/s3Service'); // Import S3 service
+
 // @desc    Update a product
 // @route   PUT /api/products/:id
 // @access  Private/Admin (to be implemented)
@@ -191,15 +193,17 @@ exports.updateProduct = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Product not found.' });
     }
 
-    // TODO: Add authorization here to ensure only admin or owner can update
-    // For now, S3 image update logic will be placeholder or handled by passing full image arrays
+    // TODO: Add proper authorization here to ensure only admin can update
+
+    const oldImageUrls = [...product.images]; // Copy existing image URLs
 
     // Fields that can be updated
     const {
         name_en, name_ar, description_en, description_ar,
-        price, category, stock, sku, tags_en, tags_ar, isActive, images
+        price, category, stock, sku, tags_en, tags_ar, isActive, images // `images` is the new array of S3 URLs
     } = req.body;
 
+    // Update product fields
     if (category) {
         const categoryExists = await Category.findById(category);
         if (!categoryExists) {
@@ -208,22 +212,39 @@ exports.updateProduct = async (req, res) => {
         product.category = category;
     }
 
-    if (name_en) product.name_en = name_en;
-    if (name_ar) product.name_ar = name_ar;
-    if (description_en) product.description_en = description_en;
-    if (description_ar) product.description_ar = description_ar;
+    if (name_en !== undefined) product.name_en = name_en;
+    if (name_ar !== undefined) product.name_ar = name_ar;
+    if (description_en !== undefined) product.description_en = description_en;
+    if (description_ar !== undefined) product.description_ar = description_ar;
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
-    if (sku) product.sku = sku; // Consider SKU uniqueness if changed
-    if (tags_en) product.tags_en = tags_en;
-    if (tags_ar) product.tags_ar = tags_ar;
+    if (sku !== undefined) product.sku = sku;
+    if (tags_en !== undefined) product.tags_en = tags_en;
+    if (tags_ar !== undefined) product.tags_ar = tags_ar;
     if (isActive !== undefined) product.isActive = isActive;
-    if (images) product.images = images; // Replace images array. More sophisticated logic for S3 needed.
+
+    // Handle image updates and S3 deletions
+    if (images !== undefined) { // `images` is the new array of S3 URLs from frontend
+      product.images = images; // Set the new list of images
+
+      // Determine which images were removed
+      const imagesToDelete = oldImageUrls.filter(oldUrl => !images.includes(oldUrl));
+
+      if (imagesToDelete.length > 0) {
+        console.log('Deleting images from S3:', imagesToDelete);
+        // Asynchronously delete images from S3
+        Promise.all(imagesToDelete.map(url => deleteFileFromS3(url)))
+          .then(() => console.log('Successfully deleted old images from S3.'))
+          .catch(s3Error => console.error('Error deleting some old images from S3:', s3Error));
+        // Note: We don't wait for S3 deletion to complete to respond to the user for faster UX.
+        // Deletion failures are logged on the server. Consider a more robust queue/retry for critical deletions.
+      }
+    }
 
     // Slugs will be updated by pre-save middleware if names change
-    if (name_en && name_en !== product.name_en) product.slug_en = undefined; // force regeneration
-    if (name_ar && name_ar !== product.name_ar) product.slug_ar = undefined; // force regeneration
-
+    // Check if names are actually changing before resetting slugs
+    if (name_en !== undefined && name_en !== product.name_en) product.slug_en = undefined;
+    if (name_ar !== undefined && name_ar !== product.name_ar) product.slug_ar = undefined;
 
     const updatedProduct = await product.save();
     res.status(200).json({ success: true, data: updatedProduct });
@@ -250,10 +271,18 @@ exports.deleteProduct = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Product not found.' });
     }
 
-    // TODO: S3 Image Deletion Logic will go here
-    // For each image in product.images, delete from S3.
+    // S3 Image Deletion Logic
+    if (product.images && product.images.length > 0) {
+      console.log('Deleting product images from S3:', product.images);
+      // Asynchronously delete images from S3
+      Promise.all(product.images.map(url => deleteFileFromS3(url)))
+        .then(() => console.log(`Successfully deleted images for product ${product._id} from S3.`))
+        .catch(s3Error => console.error(`Error deleting some images for product ${product._id} from S3:`, s3Error));
+      // Note: We don't wait for S3 deletion to complete to respond to the user for faster UX.
+      // Deletion failures are logged on the server.
+    }
 
-    await product.deleteOne(); // Changed from .remove()
+    await product.deleteOne();
 
     res.status(200).json({ success: true, message: 'Product deleted successfully.' });
   } catch (error) {

@@ -78,5 +78,15 @@ export const createAdminProject = (projectData) => adminApiClient.post('/project
 export const updateAdminProject = (id, projectData) => adminApiClient.put(`/projects/${id}/manage`, projectData);
 export const deleteAdminProject = (id) => adminApiClient.delete(`/projects/${id}/manage`);
 
+// --- File Upload API ---
+export const uploadAdminImage = (file) => {
+  const formData = new FormData();
+  formData.append('image', file); // 'image' must match the field name in backend (multer)
+  return adminApiClient.post('/v1/upload/image', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
 
 export default adminApiClient;

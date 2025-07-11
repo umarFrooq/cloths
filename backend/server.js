@@ -76,6 +76,10 @@ app.use('/api/contact', contactRoutes);
 const cartRoutes = require('./routes/cartRoutes');
 app.use('/api/cart', cartRoutes);
 
+// Upload routes
+const uploadRoutes = require('./routes/uploadRoutes');
+app.use('/api/v1/upload', uploadRoutes); // Using /api/v1 for versioning new routes
+
 // Error Handler Middleware (should be last)
 const { errorHandler } = require('./middleware/errorHandler');
 app.use(errorHandler);

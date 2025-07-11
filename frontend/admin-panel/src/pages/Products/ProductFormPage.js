@@ -7,7 +7,8 @@ import {
     getAdminProductById,
     createAdminProduct,
     updateAdminProduct,
-    getAdminCategories // To populate category dropdown
+    getAdminCategories, // To populate category dropdown
+    uploadAdminImage // Service to upload image
 } from '../../services/adminApiService';
 // import './ProductFormPage.css'; // Optional
 
@@ -18,12 +19,13 @@ const ProductFormPage = () => {
     const { productId } = useParams(); // For editing existing product
     const isEditMode = Boolean(productId);
 
+    // formData.images will store S3 URLs
     const initialFormData = {
         name_en: '', name_ar: '',
         description_en: '', description_ar: '',
         price: '', category: '', stock: '', sku: '',
-        images: [''], // Start with one empty image URL field
-        tags_en: '', tags_ar: '', // Store as comma-separated strings in form
+        images: [], // Stores S3 URLs
+        tags_en: '', tags_ar: '',
         isActive: true,
     };
     const [formData, setFormData] = useState(initialFormData);
@@ -33,6 +35,13 @@ const ProductFormPage = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
+    // State for image uploads
+    // imageUploads: tracks individual file upload status and previews
+    // { id: tempId, file: File, preview: localUrl, status: 'pending' | 'uploading' | 'success' | 'error', s3Url: '', errorMsg: '' }
+    const [imageUploads, setImageUploads] = useState([]);
+    const fileInputRef = React.createRef();
+
+
     const fetchProductAndCategories = useCallback(async () => {
         setPageLoading(true);
         setError(null);
@@ -41,7 +50,7 @@ const ProductFormPage = () => {
             if (catResponse.data && catResponse.data.success) {
                 setCategories(catResponse.data.data);
             } else {
-                throw new Error(catResponse.data.message || 'Failed to load categories');
+                throw new Error(catResponse.data?.message || 'Failed to load categories');
             }
 
             if (isEditMode) {
@@ -54,16 +63,26 @@ const ProductFormPage = () => {
                         description_en: productData.description_en || '',
                         description_ar: productData.description_ar || '',
                         price: productData.price || '',
-                        category: productData.category?._id || productData.category || '', // Handle populated vs ID
+                        category: productData.category?._id || productData.category || '',
                         stock: productData.stock || 0,
                         sku: productData.sku || '',
-                        images: productData.images && productData.images.length > 0 ? productData.images : [''],
+                        images: productData.images || [], // Should be an array of S3 URLs
                         tags_en: productData.tags_en ? productData.tags_en.join(', ') : '',
                         tags_ar: productData.tags_ar ? productData.tags_ar.join(', ') : '',
                         isActive: productData.isActive !== undefined ? productData.isActive : true,
                     });
+                    // Initialize imageUploads with existing S3 images
+                    if (productData.images && productData.images.length > 0) {
+                        setImageUploads(productData.images.map(url => ({
+                            id: url, // Use URL as ID for existing S3 images
+                            preview: url,
+                            s3Url: url,
+                            status: 'success', // Mark as successfully uploaded
+                            file: null, // No local file for existing S3 images
+                        })));
+                    }
                 } else {
-                    throw new Error(prodResponse.data.message || `Failed to load product ${productId}`);
+                    throw new Error(prodResponse.data?.message || `Failed to load product ${productId}`);
                 }
             }
         } catch (err) {
@@ -78,6 +97,17 @@ const ProductFormPage = () => {
         fetchProductAndCategories();
     }, [fetchProductAndCategories]);
 
+    // Cleanup object URLs
+    useEffect(() => {
+        return () => {
+            imageUploads.forEach(upload => {
+                if (upload.preview && upload.preview.startsWith('blob:')) {
+                    URL.revokeObjectURL(upload.preview);
+                }
+            });
+        };
+    }, [imageUploads]);
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
@@ -86,36 +116,84 @@ const ProductFormPage = () => {
         }));
     };
 
-    const handleImageChange = (index, value) => {
-        const newImages = [...formData.images];
-        newImages[index] = value;
-        setFormData(prev => ({ ...prev, images: newImages }));
+    const handleFileSelect = async (event) => {
+        const files = Array.from(event.target.files);
+        event.target.value = null; // Reset file input
+
+        const newUploads = files.map(file => ({
+            id: `${file.name}-${Date.now()}`, // Temporary unique ID
+            file: file,
+            preview: URL.createObjectURL(file),
+            status: 'pending',
+            s3Url: '',
+            errorMsg: '',
+        }));
+
+        setImageUploads(prev => [...prev, ...newUploads]);
+
+        // Automatically start uploading
+        newUploads.forEach(upload => {
+            uploadSingleFile(upload.id, upload.file);
+        });
     };
 
-    const addImageField = () => {
-        setFormData(prev => ({ ...prev, images: [...prev.images, ''] }));
-    };
-
-    const removeImageField = (index) => {
-        if (formData.images.length > 1) { // Keep at least one field
-            const newImages = formData.images.filter((_, i) => i !== index);
-            setFormData(prev => ({ ...prev, images: newImages }));
-        } else { // If only one, clear it
-            setFormData(prev => ({ ...prev, images: ['']}));
+    const uploadSingleFile = async (tempId, file) => {
+        setImageUploads(prev => prev.map(u => u.id === tempId ? { ...u, status: 'uploading' } : u));
+        try {
+            const response = await uploadAdminImage(file);
+            if (response.data && response.data.success) {
+                const s3Url = response.data.data.imageUrl;
+                setImageUploads(prev => prev.map(u => u.id === tempId ? { ...u, status: 'success', s3Url: s3Url, preview: s3Url, file: null } : u));
+                setFormData(prev => ({ ...prev, images: [...prev.images, s3Url] }));
+            } else {
+                throw new Error(response.data?.message || 'Upload failed');
+            }
+        } catch (uploadError) {
+            console.error("Upload error for file:", file.name, uploadError);
+            setImageUploads(prev => prev.map(u => u.id === tempId ? { ...u, status: 'error', errorMsg: uploadError.message || 'Upload failed' } : u));
         }
     };
 
+    const removeImage = (idToRemove, s3UrlToRemove) => {
+        // Revoke object URL if it's a local preview
+        const uploadToRemove = imageUploads.find(u => u.id === idToRemove);
+        if (uploadToRemove && uploadToRemove.preview && uploadToRemove.preview.startsWith('blob:')) {
+            URL.revokeObjectURL(uploadToRemove.preview);
+        }
+
+        setImageUploads(prev => prev.filter(u => u.id !== idToRemove));
+
+        if (s3UrlToRemove) { // If it was an S3 image (already uploaded or existing)
+            setFormData(prev => ({ ...prev, images: prev.images.filter(url => url !== s3UrlToRemove) }));
+        }
+        // Note: Actual S3 deletion happens on the backend when the form is submitted with the updated list of images.
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Check if any images are still uploading
+        const stillUploading = imageUploads.some(u => u.status === 'uploading');
+        if (stillUploading) {
+            setError(t('admin.products.form.errorImagesUploading', 'Some images are still uploading. Please wait.'));
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setSuccess(null);
 
+        // Ensure formData.images contains only S3 URLs from successful uploads
+        const finalImageS3Urls = imageUploads
+            .filter(u => u.status === 'success' && u.s3Url)
+            .map(u => u.s3Url);
+
         const productPayload = {
             ...formData,
+            images: finalImageS3Urls, // Use the filtered list of S3 URLs
             price: parseFloat(formData.price) || 0,
             stock: parseInt(formData.stock, 10) || 0,
-            images: formData.images.filter(img => img.trim() !== ''), // Remove empty image strings
             tags_en: formData.tags_en.split(',').map(tag => tag.trim()).filter(tag => tag),
             tags_ar: formData.tags_ar.split(',').map(tag => tag.trim()).filter(tag => tag),
         };
@@ -242,25 +320,65 @@ const ProductFormPage = () => {
                             </Row>
 
                             {/* Images */}
-                            <Form.Group className="mb-3" controlId="images">
+                            <Form.Group className="mb-3">
                                 <Form.Label>{t('admin.products.form.imagesLabel')}</Form.Label>
-                                {formData.images.map((imgUrl, index) => (
-                                    <InputGroup className="mb-2" key={index}>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder={t('admin.products.form.imageUrlPlaceholder', {num: index + 1})}
-                                            value={imgUrl}
-                                            onChange={(e) => handleImageChange(index, e.target.value)}
-                                        />
-                                        <Button variant="outline-danger" onClick={() => removeImageField(index)} disabled={formData.images.length === 1 && imgUrl === ''}>
-                                            {t('admin.products.form.removeImageButton')}
-                                        </Button>
-                                    </InputGroup>
-                                ))}
-                                <Button variant="outline-secondary" size="sm" onClick={addImageField}>
-                                    {t('admin.products.form.addImageButton')}
-                                </Button>
-                                <Form.Text className="d-block">{t('admin.products.form.imagesTip')}</Form.Text>
+                                <div className="mb-2">
+                                    <Button
+                                        variant="outline-secondary"
+                                        size="sm"
+                                        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                    >
+                                        {t('admin.products.form.selectImagesButton', 'Select Images...')}
+                                    </Button>
+                                    <Form.Control
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={handleFileSelect}
+                                        ref={fileInputRef}
+                                        style={{ display: 'none' }}
+                                    />
+                                </div>
+                                <div className="d-flex flex-wrap gap-2">
+                                    {imageUploads.map((upload) => (
+                                        <Card key={upload.id} style={{ width: '120px' }} className="mb-2 position-relative">
+                                            <Card.Img
+                                                variant="top"
+                                                src={upload.preview}
+                                                alt="Preview"
+                                                style={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                                            />
+                                            {upload.status === 'uploading' && (
+                                                <div className="position-absolute top-50 start-50 translate-middle">
+                                                    <Spinner animation="border" size="sm" />
+                                                </div>
+                                            )}
+                                            {upload.status === 'error' && (
+                                                <Card.Text
+                                                    className="text-danger small p-1"
+                                                    title={upload.errorMsg || t('admin.products.form.uploadErrorTooltip', 'An unknown error occurred during upload.')}
+                                                    style={{ fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                                >
+                                                    {upload.errorMsg ? (upload.errorMsg.length > 15 ? upload.errorMsg.substring(0, 12) + '...' : upload.errorMsg) : t('admin.products.form.uploadErrorShort', 'Error')}
+                                                </Card.Text>
+                                            )}
+                                             {upload.status !== 'uploading' && (
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    className="position-absolute top-0 end-0 m-1 p-1 lh-1"
+                                                    onClick={() => removeImage(upload.id, upload.s3Url)}
+                                                    title={t('admin.products.form.removeImageButton', 'Remove image')}
+                                                >
+                                                    &times;
+                                                </Button>
+                                             )}
+                                        </Card>
+                                    ))}
+                                </div>
+                                <Form.Text className="d-block">
+                                    {t('admin.products.form.imagesS3Tip', 'Upload images directly. They will be saved to S3.')}
+                                </Form.Text>
                             </Form.Group>
 
                             {/* Tags */}
