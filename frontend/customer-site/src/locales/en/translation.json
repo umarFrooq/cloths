@@ -245,6 +245,28 @@
       "majlisImageAlt": "Arabic Majlis Offer"
     }
   },
+  "home": {
+    "heroTitle": "Latest Designs",
+    "heroSubtitle": "Al Manar Furnishings is your ideal destination to buy carpets, rugs, Arabic majlis, and curtains. High quality and distinctive designs to suit all tastes.",
+    "heroButton": "Shop Now!",
+    "qualityTitle": "High Quality",
+    "qualityText": "Superior quality ensures luxury and durability in every detail and material.",
+    "deliveryTitle": "Fast Delivery",
+    "deliveryText": "Fast and secure delivery ensures your orders arrive on time.",
+    "warrantyTitle": "Best Warranty",
+    "warrantyText": "Comprehensive warranty provides peace of mind and confidence in every purchase.",
+    "featuredProductsTitle": "Featured Products",
+    "featuredProductsErrorDefault": "Failed to load featured products.",
+    "featuredProductsErrorNetwork": "A network error occurred while fetching featured products.",
+    "noFeaturedProducts": "No featured products available at the moment.",
+    "viewAllProductsButton": "View All Products",
+    "offers": {
+      "majlisTitle": "Offers on Arabic Majlis",
+      "majlisText": "Special discount up to 70%. Discover the best Arabic Majlis offers at Al Manar Furnishings, where we offer designs that combine luxury and authenticity at competitive prices.",
+      "whatsappButton": "Contact via WhatsApp for Offers",
+      "majlisImageAlt": "Arabic Majlis Offer"
+    }
+  },
   "categoriesDisplay": {
     "errorDefault": "Failed to load categories.",
     "errorNetwork": "An error occurred while fetching categories.",

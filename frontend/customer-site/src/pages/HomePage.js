@@ -16,9 +16,9 @@ const HeroSection = () => {
   return (
     <Container fluid className="text-center py-5 bg-light hero-section" style={{ backgroundImage: "url('https://via.placeholder.com/1920x600/CCCCCC/FFFFFF?text=Beautiful+Furniture+Background')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
       <div className="hero-content" style={{backgroundColor: 'rgba(255,255,255,0.7)', padding: '2rem', borderRadius: '10px', display: 'inline-block'}}>
-        <h1 className="display-4 fw-bold"> {t('home.heroTitle', 'احدث التصاميم')}</h1>
-        <p className="lead fs-4 my-3">{t('home.heroSubtitle', 'مفروشات عروبة المنار وجهتك المثالية لشراء السجاد والموكيت والمجالس والستائر. جودة عالية وتصاميم مميزة تناسب كل الأذواق')}</p>
-        <Button as={Link} to="/shop" variant="primary" size="lg">{t('home.heroButton', 'تفقد المتجر الان!')}</Button>
+        <h1 className="display-4 fw-bold"> {t('home.heroTitle')}</h1>
+        <p className="lead fs-4 my-3">{t('home.heroSubtitle')}</p>
+        <Button as={Link} to="/shop" variant="primary" size="lg">{t('home.heroButton')}</Button>
       </div>
     </Container>
   );
@@ -28,9 +28,9 @@ const HeroSection = () => {
 const ValuePropsSection = () => {
     const { t } = useTranslation();
     const valueProps = [
-        { icon: faMedal, title: t('home.qualityTitle', 'جودة عالية'), text: t('home.qualityText', 'جودة فائقة تضمن الفخامة والمتانة في كل التفاصيل والخامة') },
-        { icon: faShippingFast, title: t('home.deliveryTitle', 'تسليم سريع'), text: t('home.deliveryText', 'توصيل سريع وآمن يضمن وصول طلباتكم في الوقت المحدد') },
-        { icon: faShieldAlt, title: t('home.warrantyTitle', 'أفضل ضمان'), text: t('home.warrantyText', 'ضمان شامل يوفر لكم راحة البال وثقة في كل عملية شراء') }
+        { icon: faMedal, title: t('home.qualityTitle'), text: t('home.qualityText') },
+        { icon: faShippingFast, title: t('home.deliveryTitle'), text: t('home.deliveryText') },
+        { icon: faShieldAlt, title: t('home.warrantyTitle'), text: t('home.warrantyText') }
     ];
     return (
         <Container className="text-center py-5 value-props-section">
@@ -77,11 +77,11 @@ const FeaturedProductsSection = () => {
 
   return (
     <Container className="py-5 featured-products-section">
-      <h2 className="text-center mb-5 section-title">{t('home.featuredProductsTitle', 'المنتجات المميزة')}</h2>
+      <h2 className="text-center mb-5 section-title">{t('home.featuredProductsTitle')}</h2>
       {loading && <div className="text-center"><Spinner animation="border" /></div>}
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && products.length === 0 && (
-        <p className="text-center">{t('home.noFeaturedProducts', 'No featured products available at the moment.')}</p>
+        <p className="text-center">{t('home.noFeaturedProducts')}</p>
       )}
       {!loading && !error && products.length > 0 && (
         <Row>
@@ -92,7 +92,7 @@ const FeaturedProductsSection = () => {
       )}
        <div className="text-center mt-4">
           <Button as={Link} to="/shop" variant="outline-primary" size="lg">
-            {t('home.viewAllProductsButton', 'تصفح كل المنتجات')}
+            {t('home.viewAllProductsButton')}
           </Button>
         </div>
     </Container>
@@ -107,16 +107,16 @@ const SpecialOfferBanner = () => {
       <Container>
         <Row className="align-items-center">
           <Col md={7}>
-            <h2 className="display-5 fw-bold">{t('home.offers.majlisTitle', 'عروض علي المجالس العربية')}</h2>
-            <p className="lead my-3">{t('home.offers.majlisText', 'خصم خاص يصل الي 70%. اكتشفوا الآن أفضل عروض المجالس العربية لدى “مفروشات عروبة المنار”، حيث نقدم تصاميم تجمع بين الفخامة والأصالة بأسعار تنافسية.')}</p>
-            <Button variant="success" size="lg" href={`https://wa.me/${t('contactInfo.whatsappNumber', '966558494648')}`} target="_blank">
+            <h2 className="display-5 fw-bold">{t('home.offers.majlisTitle')}</h2>
+            <p className="lead my-3">{t('home.offers.majlisText')}</p>
+            <Button variant="success" size="lg" href={`https://wa.me/${t('contactInfo.whatsappNumber')}`} target="_blank">
               <FontAwesomeIcon icon={faTags} className="me-2" /> {/* Using faTags as placeholder for offer icon */}
-              {t('home.offers.whatsappButton', 'تواصل واتساب للعروض')}
+              {t('home.offers.whatsappButton')}
             </Button>
           </Col>
           <Col md={5} className="text-center mt-3 mt-md-0">
             {/* Replace with an actual relevant image */}
-            <img src="https://mafrushat-eurubat-almanar.com/wp-content/uploads/2024/12/png-clipart-dubai-majlis-couch-table-seat-arabic-angle-furniture-1.png" alt={t('home.offers.majlisImageAlt', 'Arabic Majlis Offer')} className="img-fluid rounded shadow" style={{maxHeight: '300px'}}/>
+            <img src="https://mafrushat-eurubat-almanar.com/wp-content/uploads/2024/12/png-clipart-dubai-majlis-couch-table-seat-arabic-angle-furniture-1.png" alt={t('home.offers.majlisImageAlt')} className="img-fluid rounded shadow" style={{maxHeight: '300px'}}/>
           </Col>
         </Row>
       </Container>
@@ -131,7 +131,7 @@ const HomePage = () => {
   return (
     <div>
       <Helmet>
-        <title>{t('pageTitles.home', 'الرئيسية')}</title>
+        <title>{t('pageTitles.home')}</title>
         {/* Add other meta tags specific to home page if needed */}
       </Helmet>
 
