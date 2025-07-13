@@ -35,7 +35,7 @@ const ProjectsPage = () => {
   }, [t, currentLang]);
 
   return (
-    <Container className="my-5">
+    <Container className="my-3">
       <Helmet>
         <title>{t('pageTitles.projects')}</title>
       </Helmet>

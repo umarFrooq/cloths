@@ -12,7 +12,7 @@ const AboutUsPage = () => {
   // For this task, we focus on en.json.
 
   return (
-    <Container className="my-5 about-us-page">
+    <Container className="my-4 about-us-page">
       <Helmet>
         <title>{t('pageTitles.aboutUs')}</title>
       </Helmet>
@@ -36,13 +36,21 @@ const AboutUsPage = () => {
         <Col md={5} className="text-center">
           {/* Replace with an actual relevant image */}
           <Image
-            src="https://via.placeholder.com/450x350/007bff/FFFFFF?text=Mafrushat+Showroom"
+            src="https://blog.atome.sg/wp-content/uploads/2022/09/The-Curtain-Boutique.jpg"
+            alt={t('aboutUsPage.imageAlt')}
+            fluid
+            rounded
+            className="shadow-sm"
+          />
+            <Image
+            src="https://avatars.mds.yandex.net/get-altay/906486/2a00000163cb3228bad7ebf644608e8dab8a/L_height"
             alt={t('aboutUsPage.imageAlt')}
             fluid
             rounded
             className="shadow-sm"
           />
         </Col>
+        
       </Row>
       {/* Optional: Add team members, company history, etc. */}
     </Container>
