@@ -6,7 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
     getAdminProjectById,
     createAdminProject,
-    updateAdminProject
+    updateAdminProject,
+    uploadAdminImage
 } from '../../services/adminApiService';
 
 const ProjectFormPage = () => {
@@ -18,7 +19,7 @@ const ProjectFormPage = () => {
     const initialFormData = {
         title_en: '', title_ar: '',
         description_en: '', description_ar: '',
-        images: [''],
+        images: [],
         client_name_en: '', client_name_ar: '',
         project_date: new Date().toISOString().split('T')[0], // Default to today
         location_en: '', location_ar: '',
@@ -30,6 +31,8 @@ const ProjectFormPage = () => {
     const [pageLoading, setPageLoading] = useState(isEditMode);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [imageUploads, setImageUploads] = useState([]);
+    const fileInputRef = React.createRef();
 
     const fetchProjectDetails = useCallback(async () => {
         if (!isEditMode) {
@@ -47,7 +50,7 @@ const ProjectFormPage = () => {
                     title_ar: projectData.title_ar || '',
                     description_en: projectData.description_en || '',
                     description_ar: projectData.description_ar || '',
-                    images: projectData.images && projectData.images.length > 0 ? projectData.images : [''],
+                    images: projectData.images || [],
                     client_name_en: projectData.client_name_en || '',
                     client_name_ar: projectData.client_name_ar || '',
                     project_date: projectData.project_date ? new Date(projectData.project_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
@@ -57,6 +60,15 @@ const ProjectFormPage = () => {
                     category_tags_ar: projectData.category_tags_ar ? projectData.category_tags_ar.join(', ') : '',
                     isActive: projectData.isActive !== undefined ? projectData.isActive : true,
                 });
+                if (projectData.images && projectData.images.length > 0) {
+                    setImageUploads(projectData.images.map(url => ({
+                        id: url,
+                        preview: url,
+                        s3Url: url,
+                        status: 'success',
+                        file: null,
+                    })));
+                }
             } else {
                 throw new Error(response.data.message || `Failed to load project ${projectId}`);
             }
@@ -72,6 +84,16 @@ const ProjectFormPage = () => {
         fetchProjectDetails();
     }, [fetchProjectDetails]);
 
+    useEffect(() => {
+        return () => {
+            imageUploads.forEach(upload => {
+                if (upload.preview && upload.preview.startsWith('blob:')) {
+                    URL.revokeObjectURL(upload.preview);
+                }
+            });
+        };
+    }, [imageUploads]);
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
@@ -80,33 +102,76 @@ const ProjectFormPage = () => {
         }));
     };
 
-    const handleImageChange = (index, value) => {
-        const newImages = [...formData.images];
-        newImages[index] = value;
-        setFormData(prev => ({ ...prev, images: newImages }));
+    const handleFileSelect = async (event) => {
+        const files = Array.from(event.target.files);
+        event.target.value = null;
+
+        const newUploads = files.map(file => ({
+            id: `${file.name}-${Date.now()}`,
+            file: file,
+            preview: URL.createObjectURL(file),
+            status: 'pending',
+            s3Url: '',
+            errorMsg: '',
+        }));
+
+        setImageUploads(prev => [...prev, ...newUploads]);
+
+        newUploads.forEach(upload => {
+            uploadSingleFile(upload.id, upload.file);
+        });
     };
 
-    const addImageField = () => {
-        setFormData(prev => ({ ...prev, images: [...prev.images, ''] }));
+    const uploadSingleFile = async (tempId, file) => {
+        setImageUploads(prev => prev.map(u => u.id === tempId ? { ...u, status: 'uploading' } : u));
+        try {
+            const response = await uploadAdminImage(file);
+            if (response.data && response.data.success) {
+                const s3Url = response.data.data.imageUrl;
+                setImageUploads(prev => prev.map(u => u.id === tempId ? { ...u, status: 'success', s3Url: s3Url, preview: s3Url, file: null } : u));
+                setFormData(prev => ({ ...prev, images: [...prev.images, s3Url] }));
+            } else {
+                throw new Error(response.data?.message || 'Upload failed');
+            }
+        } catch (uploadError) {
+            console.error("Upload error for file:", file.name, uploadError);
+            setImageUploads(prev => prev.map(u => u.id === tempId ? { ...u, status: 'error', errorMsg: uploadError.message || 'Upload failed' } : u));
+        }
     };
 
-    const removeImageField = (index) => {
-        if (formData.images.length > 1) {
-            setFormData(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
-        } else {
-             setFormData(prev => ({ ...prev, images: ['']}));
+    const removeImage = (idToRemove, s3UrlToRemove) => {
+        const uploadToRemove = imageUploads.find(u => u.id === idToRemove);
+        if (uploadToRemove && uploadToRemove.preview && uploadToRemove.preview.startsWith('blob:')) {
+            URL.revokeObjectURL(uploadToRemove.preview);
+        }
+
+        setImageUploads(prev => prev.filter(u => u.id !== idToRemove));
+
+        if (s3UrlToRemove) {
+            setFormData(prev => ({ ...prev, images: prev.images.filter(url => url !== s3UrlToRemove) }));
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const stillUploading = imageUploads.some(u => u.status === 'uploading');
+        if (stillUploading) {
+            setError(t('admin.projects.form.errorImagesUploading', 'Some images are still uploading. Please wait.'));
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setSuccess(null);
 
+        const finalImageS3Urls = imageUploads
+            .filter(u => u.status === 'success' && u.s3Url)
+            .map(u => u.s3Url);
+
         const projectPayload = {
             ...formData,
-            images: formData.images.filter(img => img.trim() !== ''),
+            images: finalImageS3Urls,
             category_tags_en: formData.category_tags_en.split(',').map(tag => tag.trim()).filter(tag => tag),
             category_tags_ar: formData.category_tags_ar.split(',').map(tag => tag.trim()).filter(tag => tag),
             project_date: formData.project_date ? new Date(formData.project_date).toISOString() : undefined,
@@ -192,15 +257,65 @@ const ProjectFormPage = () => {
                                 </Form.Group></Col>
                             </Row>
                             {/* Images */}
-                            <Form.Group className="mb-3" controlId="images">
-                                <Form.Label>{t('admin.projects.form.imagesLabel')} <span className="text-danger">*</span></Form.Label>
-                                {formData.images.map((imgUrl, index) => (
-                                    <InputGroup className="mb-2" key={index}>
-                                        <Form.Control type="text" placeholder={t('admin.projects.form.imageUrlPlaceholder', {num: index + 1})} value={imgUrl} onChange={(e) => handleImageChange(index, e.target.value)} />
-                                        <Button variant="outline-danger" onClick={() => removeImageField(index)} disabled={formData.images.length === 1 && imgUrl === ''}>{t('remove')}</Button>
-                                    </InputGroup>
-                                ))}
-                                <Button variant="outline-secondary" size="sm" onClick={addImageField}>{t('admin.projects.form.addImageButton')}</Button>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('admin.projects.form.imagesLabel')}</Form.Label>
+                                <div className="mb-2">
+                                    <Button
+                                        variant="outline-secondary"
+                                        size="sm"
+                                        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                    >
+                                        {t('admin.projects.form.selectImagesButton', 'Select Images...')}
+                                    </Button>
+                                    <Form.Control
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={handleFileSelect}
+                                        ref={fileInputRef}
+                                        style={{ display: 'none' }}
+                                    />
+                                </div>
+                                <div className="d-flex flex-wrap gap-2">
+                                    {imageUploads.map((upload) => (
+                                        <Card key={upload.id} style={{ width: '120px' }} className="mb-2 position-relative">
+                                            <Card.Img
+                                                variant="top"
+                                                src={upload.preview}
+                                                alt="Preview"
+                                                style={{ width: '100%', height: '100px', objectFit: 'cover' }}
+                                            />
+                                            {upload.status === 'uploading' && (
+                                                <div className="position-absolute top-50 start-50 translate-middle">
+                                                    <Spinner animation="border" size="sm" />
+                                                </div>
+                                            )}
+                                            {upload.status === 'error' && (
+                                                <Card.Text
+                                                    className="text-danger small p-1"
+                                                    title={upload.errorMsg || t('admin.projects.form.uploadErrorTooltip', 'An unknown error occurred during upload.')}
+                                                    style={{ fontSize: '0.75rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                                >
+                                                    {upload.errorMsg ? (upload.errorMsg.length > 15 ? upload.errorMsg.substring(0, 12) + '...' : upload.errorMsg) : t('admin.projects.form.uploadErrorShort', 'Error')}
+                                                </Card.Text>
+                                            )}
+                                             {upload.status !== 'uploading' && (
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    className="position-absolute top-0 end-0 m-1 p-1 lh-1"
+                                                    onClick={() => removeImage(upload.id, upload.s3Url)}
+                                                    title={t('admin.projects.form.removeImageButton', 'Remove image')}
+                                                >
+                                                    &times;
+                                                </Button>
+                                             )}
+                                        </Card>
+                                    ))}
+                                </div>
+                                <Form.Text className="d-block">
+                                    {t('admin.projects.form.imagesS3Tip', 'Upload images directly. They will be saved to S3.')}
+                                </Form.Text>
                             </Form.Group>
                             {/* Client, Date, Location */}
                             <Row>

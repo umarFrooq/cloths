@@ -114,6 +114,8 @@ exports.getProjectByIdentifier = async (req, res, next) => {
   }
 };
 
+const { deleteFileFromS3 } = require('../utils/s3Service');
+
 // @desc    Update a project
 // @route   PUT /api/projects/:id
 // @access  Private/Admin/Editor
@@ -124,6 +126,8 @@ exports.updateProject = async (req, res, next) => {
     if (!project) {
       return next(new ErrorResponse(`Project not found with id ${req.params.id}`, 404));
     }
+
+    const oldImageUrls = [...project.images]; // Copy existing image URLs
 
     // Fields that can be updated (all fields from schema except slugs which auto-update if title changes)
     const {
@@ -137,7 +141,6 @@ exports.updateProject = async (req, res, next) => {
     if (title_ar !== undefined) project.title_ar = title_ar;
     if (description_en !== undefined) project.description_en = description_en;
     if (description_ar !== undefined) project.description_ar = description_ar;
-    if (images !== undefined) project.images = images; // Assuming full array replacement
     if (client_name_en !== undefined) project.client_name_en = client_name_en;
     if (client_name_ar !== undefined) project.client_name_ar = client_name_ar;
     if (project_date !== undefined) project.project_date = project_date;
@@ -146,6 +149,22 @@ exports.updateProject = async (req, res, next) => {
     if (category_tags_en !== undefined) project.category_tags_en = category_tags_en;
     if (category_tags_ar !== undefined) project.category_tags_ar = category_tags_ar;
     if (isActive !== undefined) project.isActive = isActive;
+
+    // Handle image updates and S3 deletions
+    if (images !== undefined) { // `images` is the new array of S3 URLs from frontend
+      project.images = images; // Set the new list of images
+
+      // Determine which images were removed
+      const imagesToDelete = oldImageUrls.filter(oldUrl => !images.includes(oldUrl));
+
+      if (imagesToDelete.length > 0) {
+        console.log('Deleting images from S3:', imagesToDelete);
+        // Asynchronously delete images from S3
+        Promise.all(imagesToDelete.map(url => deleteFileFromS3(url)))
+          .then(() => console.log('Successfully deleted old images from S3.'))
+          .catch(s3Error => console.error('Error deleting some old images from S3:', s3Error));
+      }
+    }
 
     // Slugs will be updated by pre-save middleware if titles change
     if (title_en && title_en !== project.title_en) project.slug_en = undefined; // force regeneration
@@ -172,7 +191,14 @@ exports.deleteProject = async (req, res, next) => {
       return next(new ErrorResponse(`Project not found with id ${req.params.id}`, 404));
     }
 
-    // TODO: If images are stored in S3 or similar, delete them here.
+    // S3 Image Deletion Logic
+    if (project.images && project.images.length > 0) {
+      console.log('Deleting project images from S3:', project.images);
+      // Asynchronously delete images from S3
+      Promise.all(project.images.map(url => deleteFileFromS3(url)))
+        .then(() => console.log(`Successfully deleted images for project ${project._id} from S3.`))
+        .catch(s3Error => console.error(`Error deleting some images for project ${project._id} from S3:`, s3Error));
+    }
 
     await project.deleteOne();
     res.status(200).json({ success: true, message: 'Project deleted successfully.' });
