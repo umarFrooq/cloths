@@ -76,7 +76,7 @@ const CheckoutPage = () => {
     try {
       const response = await apiCreateOrder(orderData, token);
       if (response.data && response.data.success) {
-        setStatus({ loading: false, error: null, success: t('checkoutPage.success.orderPlaced', 'Order placed successfully! Order ID: {{orderId}}', { orderId: response.data.data._id }) });
+        setStatus({ loading: false, error: null, success: t('checkoutPage.success.orderPlaced', { orderId: response.data.data._id }) });
         await clearClientCart(); // Clear cart from context and backend
         // Redirect to order confirmation page or account/orders
         setTimeout(() => navigate(`/account/orders`), 5000); // Redirect after 5s
@@ -106,9 +106,9 @@ const CheckoutPage = () => {
   return (
     <Container className="my-5 checkout-page">
       <Helmet>
-        <title>{t('pageTitles.checkout', 'إتمام الطلب')}</title>
+        <title>{t('pageTitles.checkout')}</title>
       </Helmet>
-      <h1 className="mb-4 page-main-title">{t('checkoutPage.title', 'إتمام الطلب')}</h1>
+      <h1 className="mb-4 page-main-title">{t('checkoutPage.title')}</h1>
 
       {status.success && <Alert variant="success">{status.success}</Alert>}
       {status.error && <Alert variant="danger">{status.error}</Alert>}
@@ -117,42 +117,42 @@ const CheckoutPage = () => {
         <Form onSubmit={handleSubmitOrder}>
           <Row>
             <Col md={7} className="mb-4">
-              <h4>{t('checkoutPage.shipping.title', 'عنوان الشحن')}</h4>
+              <h4>{t('checkoutPage.shipping.title')}</h4>
               <Form.Group className="mb-3" controlId="checkoutAddress">
-                <Form.Label>{t('checkoutPage.shipping.address', 'العنوان')}</Form.Label>
+                <Form.Label>{t('checkoutPage.shipping.address')}</Form.Label>
                 <Form.Control type="text" name="address" value={shippingAddress.address} onChange={handleShippingChange} required />
               </Form.Group>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="checkoutCity">
-                    <Form.Label>{t('checkoutPage.shipping.city', 'المدينة')}</Form.Label>
+                    <Form.Label>{t('checkoutPage.shipping.city')}</Form.Label>
                     <Form.Control type="text" name="city" value={shippingAddress.city} onChange={handleShippingChange} required />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="checkoutPostalCode">
-                    <Form.Label>{t('checkoutPage.shipping.postalCode', 'الرمز البريدي')}</Form.Label>
+                    <Form.Label>{t('checkoutPage.shipping.postalCode')}</Form.Label>
                     <Form.Control type="text" name="postalCode" value={shippingAddress.postalCode} onChange={handleShippingChange} required />
                   </Form.Group>
                 </Col>
               </Row>
               <Form.Group className="mb-3" controlId="checkoutCountry">
-                <Form.Label>{t('checkoutPage.shipping.country', 'الدولة')}</Form.Label>
+                <Form.Label>{t('checkoutPage.shipping.country')}</Form.Label>
                 <Form.Control type="text" name="country" value={shippingAddress.country} onChange={handleShippingChange} required />
               </Form.Group>
               <Form.Group className="mb-3" controlId="checkoutPhone">
-                <Form.Label>{t('checkoutPage.shipping.phone', 'رقم الهاتف')}</Form.Label>
+                <Form.Label>{t('checkoutPage.shipping.phone')}</Form.Label>
                 <Form.Control type="tel" name="phone" value={shippingAddress.phone} onChange={handleShippingChange} required />
               </Form.Group>
 
-              <h4 className="mt-4">{t('checkoutPage.payment.title', 'طريقة الدفع')}</h4>
+              <h4 className="mt-4">{t('checkoutPage.payment.title')}</h4>
               <Form.Group className="mb-3">
                 <Form.Check
                   type="radio"
                   id="paymentCashOnDelivery"
                   name="paymentMethod"
                   value="CashOnDelivery"
-                  label={t('checkoutPage.payment.cashOnDelivery', 'الدفع عند الاستلام')}
+                  label={t('checkoutPage.payment.cashOnDelivery')}
                   checked={paymentMethod === 'CashOnDelivery'}
                   onChange={handlePaymentMethodChange}
                 />
@@ -162,7 +162,7 @@ const CheckoutPage = () => {
                   id="paymentCreditCard"
                   name="paymentMethod"
                   value="CreditCard"
-                  label={t('checkoutPage.payment.creditCard', 'بطاقة ائتمانية (غير متاح حالياً)')}
+                  label={t('checkoutPage.payment.creditCard')}
                   checked={paymentMethod === 'CreditCard'}
                   onChange={handlePaymentMethodChange}
                   disabled // Placeholder
@@ -171,7 +171,7 @@ const CheckoutPage = () => {
             </Col>
 
             <Col md={5}>
-              <h4>{t('checkoutPage.summary.title', 'ملخص طلبك')}</h4>
+              <h4>{t('checkoutPage.summary.title')}</h4>
               <Card>
                 <ListGroup variant="flush">
                   {cartItems.map(item => ( item.product &&
@@ -181,19 +181,19 @@ const CheckoutPage = () => {
                     </ListGroup.Item>
                   ))}
                   <ListGroup.Item className="d-flex justify-content-between">
-                    <span>{t('checkoutPage.summary.subtotal', 'المجموع الفرعي')}</span>
+                    <span>{t('checkoutPage.summary.subtotal')}</span>
                     <strong>{formatPrice(cartTotals.subtotal)}</strong>
                   </ListGroup.Item>
                   <ListGroup.Item className="d-flex justify-content-between">
-                    <span>{t('checkoutPage.summary.shipping', 'الشحن')}</span>
-                    <strong>{cartTotals.shipping > 0 ? formatPrice(cartTotals.shipping) : t('checkoutPage.summary.freeShipping', 'مجاني')}</strong>
+                    <span>{t('checkoutPage.summary.shipping')}</span>
+                    <strong>{cartTotals.shipping > 0 ? formatPrice(cartTotals.shipping) : t('checkoutPage.summary.freeShipping')}</strong>
                   </ListGroup.Item>
                    <ListGroup.Item className="d-flex justify-content-between">
-                    <span>{t('checkoutPage.summary.tax', 'الضريبة')}</span>
+                    <span>{t('checkoutPage.summary.tax')}</span>
                     <strong>{formatPrice(cartTotals.tax)}</strong>
                   </ListGroup.Item>
                   <ListGroup.Item className="d-flex justify-content-between fw-bold h5">
-                    <span>{t('checkoutPage.summary.total', 'المجموع الكلي')}</span>
+                    <span>{t('checkoutPage.summary.total')}</span>
                     <span>{formatPrice(cartTotals.total)}</span>
                   </ListGroup.Item>
                 </ListGroup>
@@ -203,9 +203,9 @@ const CheckoutPage = () => {
                       {status.loading ? (
                         <>
                           <Spinner as="span" animation="border" size="sm" />{' '}
-                          {t('checkoutPage.placingOrder', 'جارِ إرسال الطلب...')}
+                          {t('checkoutPage.placingOrder')}
                         </>
-                      ) : t('checkoutPage.placeOrderButton', 'إرسال الطلب')}
+                      ) : t('checkoutPage.placeOrderButton')}
                     </Button>
                   </div>
                 </Card.Body>

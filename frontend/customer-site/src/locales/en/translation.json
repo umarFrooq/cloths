@@ -49,13 +49,18 @@
   },
   "common": {
     "loading": "Loading...",
-    "optional": "Optional"
+    "optional": "Optional",
+    "submitting": "Submitting..."
   },
   "pageTitles": {
     "home": "Home",
     "aboutUs": "About Us",
     "contactUs": "Contact Us",
-    "shop": "Shop"
+    "shop": "Shop",
+    "login": "Login",
+    "register": "Create Account",
+    "cart": "Shopping Cart",
+    "checkout": "Checkout"
   },
   "shopPage": {
     "title": "Shop",
@@ -78,13 +83,6 @@
     "noProductsFound": "No products found matching your criteria.",
     "resultsCount": "Showing {{count}} of {{total}} products"
   },
-  "pageTitles": {
-    "home": "Home",
-    "aboutUs": "About Us",
-    "contactUs": "Contact Us",
-    "shop": "Shop",
-    "login": "Login"
-  },
   "loginPage": {
     "title": "Login",
     "form": {
@@ -96,14 +94,6 @@
     "forgotPasswordLink": "Forgot your password?",
     "noAccount": "Don't have an account?",
     "registerLink": "Create a new account"
-  },
-  "pageTitles": {
-    "home": "Home",
-    "aboutUs": "About Us",
-    "contactUs": "Contact Us",
-    "shop": "Shop",
-    "login": "Login",
-    "register": "Create Account"
   },
   "registerPage": {
     "title": "Create New Account",
@@ -120,15 +110,6 @@
     },
     "alreadyHaveAccount": "Already have an account?",
     "loginLink": "Login"
-  },
-  "pageTitles": {
-    "home": "Home",
-    "aboutUs": "About Us",
-    "contactUs": "Contact Us",
-    "shop": "Shop",
-    "login": "Login",
-    "register": "Create Account",
-    "cart": "Shopping Cart"
   },
   "cartPage": {
     "loadingCart": "Loading your cart...",
@@ -148,15 +129,6 @@
       "total": "Total"
     },
     "checkoutButton": "Proceed to Checkout"
-  },
-  "pageTitles": {
-    "home": "Home",
-    "aboutUs": "About Us",
-    "contactUs": "Contact Us",
-    "shop": "Shop",
-    "login": "Login",
-    "register": "Create Account",
-    "cart": "Shopping Cart"
   },
   "productDetailPage": {
     "error": {
@@ -200,11 +172,6 @@
       "submitButton": "Submit Review"
     }
   },
-  "common": {
-    "loading": "Loading...",
-    "optional": "Optional",
-    "submitting": "Submitting..."
-  },
   "contactUsPage": {
     "title": "Contact Us",
     "form": {
@@ -232,7 +199,7 @@
       "mapTitle": "Our Location on the Map"
     }
   },
-  "aboutUs": {
+  "aboutUsPage": {
     "title": "About Us",
     "paragraph1": "Welcome to Mafrushat Eurubat Almanar, your ideal destination for renewing your home with the finest types of furnishings that combine luxury and quality.",
     "paragraph2": "Our store specializes in offering a diverse range of products including: carpets and rugs with modern and classic designs to suit all tastes and spaces, distinctive Arab majlis collections inspired by authentic Arab heritage, with details that combine comfort and luxury, and elegant curtains to decorate windows with fabrics and designs that add an elegant touch to every room.",
@@ -243,7 +210,7 @@
     "visionText": "To be the leading name in home furnishings in the region, known for our exceptional quality, innovative designs, and customer-centric approach.",
     "imageAlt": "Our Showroom"
   },
-  "home": {
+  "homePage": {
     "heroTitle": "Latest Designs",
     "heroSubtitle": "Al Manar Furnishings is your ideal destination to buy carpets, rugs, Arabic majlis, and curtains. High quality and distinctive designs to suit all tastes.",
     "heroButton": "Shop Now!",
@@ -273,5 +240,39 @@
     "noCategories": "No categories found.",
     "title": "Shop by Category",
     "viewProducts": "View Products"
+  },
+  "checkoutPage": {
+    "title": "Checkout",
+    "error": {
+      "emptyCart": "Your cart is empty. Please add items before checking out.",
+      "orderDefault": "Failed to place your order. Please try again.",
+      "orderNetwork": "A network error occurred. Please check your connection and try again."
+    },
+    "success": {
+      "orderPlaced": "Order placed successfully! Order ID: {{orderId}}"
+    },
+    "shipping": {
+      "title": "Shipping Address",
+      "address": "Address",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "country": "Country",
+      "phone": "Phone Number"
+    },
+    "payment": {
+      "title": "Payment Method",
+      "cashOnDelivery": "Cash on Delivery",
+      "creditCard": "Credit Card (Not available yet)"
+    },
+    "summary": {
+      "title": "Your Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "freeShipping": "Free",
+      "tax": "Tax",
+      "total": "Total"
+    },
+    "placingOrder": "Placing Order...",
+    "placeOrderButton": "Place Order"
   }
 }
