@@ -43,38 +43,38 @@ const ContactUsPage = () => {
   return (
     <Container className="my-5 contact-us-page">
       <Helmet>
-        <title>{t('pageTitles.contactUs', 'تواصل معنا')}</title>
+        <title>{t('pageTitles.contactUs')}</title>
       </Helmet>
-      <h1 className="text-center page-main-title mb-5">{t('contactUsPage.title', 'تواصل معنا')}</h1>
+      <h1 className="text-center page-main-title mb-5">{t('contactUsPage.title')}</h1>
 
       <Row>
         <Col md={6} className="mb-4 mb-md-0">
-          <h3 className="mb-3">{t('contactUsPage.form.title', 'أرسل لنا رسالة')}</h3>
+          <h3 className="mb-3">{t('contactUsPage.form.title')}</h3>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="contactFormName">
-              <Form.Label>{t('contactUsPage.form.name', 'الاسم الكامل')}</Form.Label>
+              <Form.Label>{t('contactUsPage.form.name')}</Form.Label>
               <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
             </Form.Group>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="contactFormEmail">
-                  <Form.Label>{t('contactUsPage.form.email', 'البريد الإلكتروني')}</Form.Label>
+                  <Form.Label>{t('contactUsPage.form.email')}</Form.Label>
                   <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} required />
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="contactFormPhone">
-                  <Form.Label>{t('contactUsPage.form.phone', 'رقم الهاتف')} <span className="text-muted">({t('optional', 'اختياري')})</span></Form.Label>
+                  <Form.Label>{t('contactUsPage.form.phone')} <span className="text-muted">({t('common.optional')})</span></Form.Label>
                   <Form.Control type="tel" name="phone" value={formData.phone} onChange={handleChange} />
                 </Form.Group>
               </Col>
             </Row>
             <Form.Group className="mb-3" controlId="contactFormSubject">
-              <Form.Label>{t('contactUsPage.form.subject', 'الموضوع')}</Form.Label>
+              <Form.Label>{t('contactUsPage.form.subject')}</Form.Label>
               <Form.Control type="text" name="subject" value={formData.subject} onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3" controlId="contactFormMessage">
-              <Form.Label>{t('contactUsPage.form.message', 'رسالتك')}</Form.Label>
+              <Form.Label>{t('contactUsPage.form.message')}</Form.Label>
               <Form.Control as="textarea" name="message" value={formData.message} onChange={handleChange} rows={5} required />
             </Form.Group>
 
@@ -86,36 +86,36 @@ const ContactUsPage = () => {
                 <>
                   <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
                   {' '}
-                  {t('contactUsPage.form.sending', 'جار الإرسال...')}
+                  {t('contactUsPage.form.sending')}
                 </>
               ) : (
-                t('contactUsPage.form.submitButton', 'إرسال الرسالة')
+                t('contactUsPage.form.submitButton')
               )}
             </Button>
           </Form>
         </Col>
 
         <Col md={6}>
-          <h3 className="mb-3">{t('contactUsPage.info.title', 'معلومات الاتصال')}</h3>
-          <p>{t('contactUsPage.info.intro', 'إذا كنت تحتاج للمساعدة لا تتردد في التواصل معنا عبر القنوات التالية:')}</p>
+          <h3 className="mb-3">{t('contactUsPage.info.title')}</h3>
+          <p>{t('contactUsPage.info.intro')}</p>
           <ul className="list-unstyled contact-info-list">
             <li className="mb-3">
               <FontAwesomeIcon icon={faPhone} className="me-2 text-primary" />
-              <strong>{t('contactUsPage.info.phoneLabel', 'الهاتف')}:</strong> <a href="tel:+966558494648" className="text-decoration-none text-dark">+966 558494648</a>
+              <strong>{t('contactUsPage.info.phoneLabel')}:</strong> <a href="tel:+966558494648" className="text-decoration-none text-dark">+966 558494648</a>
             </li>
             <li className="mb-3">
               <FontAwesomeIcon icon={faEnvelope} className="me-2 text-primary" />
-              <strong>{t('contactUsPage.info.emailLabel', 'البريد الإلكتروني')}:</strong> <a href="mailto:info@example.com" className="text-decoration-none text-dark">info@mafrushat-almanar.com</a> {/* Replace with actual email */}
+              <strong>{t('contactUsPage.info.emailLabel')}:</strong> <a href="mailto:info@example.com" className="text-decoration-none text-dark">info@mafrushat-almanar.com</a> {/* Replace with actual email */}
             </li>
             <li className="mb-3">
               <FontAwesomeIcon icon={faMapMarkerAlt} className="me-2 text-primary" />
-              <strong>{t('contactUsPage.info.addressLabel', 'موقعنا')}:</strong>
-              <p className="mt-1 mb-0">{t('footer.address', 'الرياض، المنصورية، منفوحة الرياض 12685، المملكة العربية السعودية')}</p>
+              <strong>{t('contactUsPage.info.addressLabel')}:</strong>
+              <p className="mt-1 mb-0">{t('footer.address')}</p>
             </li>
           </ul>
-          <h4 className="mt-4 mb-3">{t('contactUsPage.info.hoursTitle', 'ساعات العمل')}</h4>
-          <p>{t('contactUsPage.info.hoursText', 'السبت - الخميس: 9:00 صباحًا - 10:00 مساءً')}</p>
-          <p>{t('contactUsPage.info.fridayHoursText', 'الجمعة: 2:00 ظهرًا - 10:00 مساءً')}</p>
+          <h4 className="mt-4 mb-3">{t('contactUsPage.info.hoursTitle')}</h4>
+          <p>{t('contactUsPage.info.hoursText')}</p>
+          <p>{t('contactUsPage.info.fridayHoursText')}</p>
 
           {/* Optional: Google Maps Embed */}
           <div className="mt-4">
@@ -126,7 +126,7 @@ const ContactUsPage = () => {
                 style={{ border:0 }}
                 allowFullScreen=""
                 loading="lazy"
-                title={t('contactUsPage.info.mapTitle', 'موقعنا على الخريطة')}>
+                title={t('contactUsPage.info.mapTitle')}>
             </iframe>
           </div>
         </Col>
