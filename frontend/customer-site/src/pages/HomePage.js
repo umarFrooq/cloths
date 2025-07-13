@@ -14,8 +14,8 @@ import { faMedal, faShippingFast, faShieldAlt, faTags } from '@fortawesome/free-
 const HeroSection = () => {
   const { t } = useTranslation();
   return (
-    <Container fluid className="text-center py-5 bg-light hero-section" style={{ backgroundImage: "url('https://via.placeholder.com/1920x600/CCCCCC/FFFFFF?text=Beautiful+Furniture+Background')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
-      <div className="hero-content" style={{backgroundColor: 'rgba(255,255,255,0.7)', padding: '2rem', borderRadius: '10px', display: 'inline-block'}}>
+    <Container fluid className="text-center py-5 bg-light hero-section" style={{ backgroundImage: "url('https://alfaorigin.s3.eu-north-1.amazonaws.com/products/1752247252748-Whisk_a846baeeaa.jpg')", backgroundSize: 'cover', backgroundPosition: 'center'}}>
+      <div className="hero-content" style={{backgroundColor: 'rgba(255, 255, 255, 0.3)', padding: '2rem', borderRadius: '10px', display: 'inline-block'}}>
         <h1 className="display-4 fw-bold"> {t('home.heroTitle')}</h1>
         <p className="lead fs-4 my-3">{t('home.heroSubtitle')}</p>
         <Button as={Link} to="/shop" variant="primary" size="lg">{t('home.heroButton')}</Button>
@@ -136,14 +136,14 @@ const HomePage = () => {
       </Helmet>
 
       <HeroSection />
-      <ValuePropsSection /> {/* Added this section */}
+      {/* <ValuePropsSection />  */}
 
       {/* Language switcher removed from here, as it's in the Navbar */}
 
       <CategoriesDisplay />
 
       <FeaturedProductsSection />
-
+      <ValuePropsSection /> {/* Added this section */}
       {/* Add other homepage sections here as they are built */}
       {/* e.g., Special Offer Banner, Most Popular Now, etc. */}
 
