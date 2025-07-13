@@ -28,8 +28,8 @@ const LoginPage = () => {
     // setStatus({ loading: true, error: null }); // Context handles loading/error
     try {
       await login(formData);
-      // navigate('/account'); // Redirect to account page or dashboard
-      const from = location.state?.from?.pathname || '/account'; // Redirect to previous page or account
+      // navigate('/'); // Redirect to home page
+      const from = location.state?.from?.pathname || '/'; // Redirect to previous page or home
       navigate(from, { replace: true });
     } catch (err) {
       // Error is set in AuthContext, component will re-render and display it

@@ -41,7 +41,7 @@ const RegisterPage = () => {
     try {
       const { confirmPassword, ...apiData } = formData;
       await register(apiData);
-      const from = location.state?.from?.pathname || '/account';
+      const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     } catch (err) {
       // Error is set in AuthContext
