@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Spinner, Alert, Badge } from 'react-bootstrap';
 import { getContactMessages } from '../../services/adminApiService';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAdminAuth } from '../../contexts/AdminAuthContext';
 
 const ContactMessagesPage = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user } = useAuth();
+  const { adminUser } = useAdminAuth();
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         setLoading(true);
-        const response = await getContactMessages(user.token);
+        const response = await getContactMessages();
         setMessages(response.data.data);
         setError(null);
       } catch (err) {
@@ -23,10 +23,10 @@ const ContactMessagesPage = () => {
       }
     };
 
-    if (user && user.token) {
+    if (adminUser) {
       fetchMessages();
     }
-  }, [user]);
+  }, [adminUser]);
 
   if (loading) {
     return <Spinner animation="border" />;
