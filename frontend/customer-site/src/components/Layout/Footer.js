@@ -29,7 +29,9 @@ const Footer = () => {
             <Nav className="flex-column footer-contact-info">
               <Nav.Item className="mb-2">
                 <FontAwesomeIcon icon={faPhone} className="me-2" />
-                <a href="tel:+966558494648" className="footer-link">{t('footer.phone', '+966 558494648')}</a>
+                <div dir="ltr">
+                  <a href="tel:+966558494648" className="footer-link">+966 558494648</a>
+                </div>
               </Nav.Item>
               <Nav.Item>
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="me-2" />

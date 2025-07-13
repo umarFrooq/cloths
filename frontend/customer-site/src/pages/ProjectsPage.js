@@ -37,9 +37,9 @@ const ProjectsPage = () => {
   return (
     <Container className="my-5">
       <Helmet>
-        <title>{t('pageTitles.projects', 'مشاريعنا')}</title>
+        <title>{t('pageTitles.projects')}</title>
       </Helmet>
-      <h2 className="text-center mb-4 section-title">{t('projectsPage.title', 'مشاريعنا')}</h2>
+      <h2 className="text-center mb-4 section-title">{t('projectsPage.title')}</h2>
 
       {loading && (
         <div className="text-center my-5">
