@@ -106,4 +106,7 @@ export const uploadAdminImage = (file) => {
   });
 };
 
+// --- Contact Messages ---
+export const getContactMessages = () => adminApiClient.get('/contact');
+
 export default adminApiClient;

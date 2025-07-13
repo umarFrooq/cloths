@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTachometerAlt, faBoxOpen, faTags, faShoppingCart, faUsers,
-  faChartLine, faCog, faSignOutAlt, faFileContract, faHome // Added icons for projects and homepage
+  faChartLine, faCog, faSignOutAlt, faFileContract, faHome, faEnvelope // Added icons for projects and homepage
 } from '@fortawesome/free-solid-svg-icons';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { useAdminAuth } from '../../contexts/AdminAuthContext'; // Import useAdminAuth
@@ -61,6 +61,12 @@ const Sidebar = () => {
           <Nav.Link>
             <FontAwesomeIcon icon={faUsers} className="nav-icon" />
             {t('adminPanel.nav.users', 'Users')}
+          </Nav.Link>
+        </LinkContainer>
+        <LinkContainer to="/admin/contact-messages">
+          <Nav.Link>
+            <FontAwesomeIcon icon={faEnvelope} className="nav-icon" />
+            {t('adminPanel.nav.contactMessages', 'Contact Messages')}
           </Nav.Link>
         </LinkContainer>
         <LinkContainer to="/admin/projects-content">

@@ -17,6 +17,7 @@ import OrderDetailPage from './pages/Orders/OrderDetailPage';
 import UserListPage from './pages/Users/UserListPage';
 import ProjectListPage from './pages/Projects/ProjectListPage'; // Import ProjectListPage
 import ProjectFormPage from './pages/Projects/ProjectFormPage'; // Import ProjectFormPage
+import ContactMessagesPage from './pages/Contact/ContactMessagesPage';
 
 
 // Placeholder Page Components for Admin Panel
@@ -150,6 +151,7 @@ function App() {
                     <Route path="orders" element={<OrderListPage />} />
                     <Route path="orders/view/:orderId" element={<OrderDetailPage />} />
                     <Route path="users" element={<UserListPage />} />
+                    <Route path="contact-messages" element={<ContactMessagesPage />} />
                     <Route path="projects-content" element={<ProjectListPage />} />
                     <Route path="projects-content/new" element={<ProjectFormPage />} />
                     <Route path="projects-content/edit/:projectId" element={<ProjectFormPage />} />
