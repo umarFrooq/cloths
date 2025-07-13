@@ -145,6 +145,8 @@
     "quantity": "Quantity",
     "addToCartButton": "Add to Cart",
     "addedToCartSuccess": "{{quantity}} x {{productName}} added to cart!",
+    "continueShoppingButton": "Continue Shopping",
+    "checkoutButton": "Checkout",
     "skuLabel": "SKU",
     "tagsLabel": "Tags",
     "reviews": {
@@ -254,6 +256,8 @@
     "shipping": {
       "title": "Shipping Address",
       "address": "Address",
+      "street": "Street",
+      "houseNumber": "House Number",
       "city": "City",
       "postalCode": "Postal Code",
       "country": "Country",

@@ -331,7 +331,19 @@ const ProductDetailPage = () => {
               </Col>
             </Row>
           )}
-          {addedToCartMessage && <Alert variant="success" className="mt-3">{addedToCartMessage}</Alert>}
+          {addedToCartMessage && (
+            <Alert variant="success" className="mt-3">
+              {addedToCartMessage}
+              <div className="mt-2">
+                <Button variant="secondary" onClick={() => navigate('/shop')} className="me-2">
+                  {t('productDetailPage.continueShoppingButton', 'Continue Shopping')}
+                </Button>
+                <Button variant="primary" onClick={() => navigate('/checkout')}>
+                  {t('productDetailPage.checkoutButton', 'Checkout')}
+                </Button>
+              </div>
+            </Alert>
+          )}
           {cartError && <Alert variant="danger" className="mt-3">{cartError}</Alert>} {/* Display cart context error */}
 
           {/* Optional: SKU, Tags, etc. */}

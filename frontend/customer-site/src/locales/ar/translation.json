@@ -176,6 +176,8 @@
     "quantity": "الكمية",
     "addToCartButton": "أضف إلى السلة",
     "addedToCartSuccess": "تمت إضافة {{quantity}} x {{productName}} إلى السلة!",
+    "continueShoppingButton": "متابعة التسوق",
+    "checkoutButton": "إتمام الشراء",
     "skuLabel": "رمز SKU",
     "tagsLabel": "الوسوم",
     "reviews": {
@@ -227,6 +229,8 @@
     "shipping": {
       "title": "عنوان الشحن",
       "address": "العنوان",
+      "street": "الشارع",
+      "houseNumber": "رقم المنزل",
       "city": "المدينة",
       "postalCode": "الرمز البريدي",
       "country": "الدولة",

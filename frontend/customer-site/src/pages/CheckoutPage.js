@@ -16,6 +16,8 @@ const CheckoutPage = () => {
 
   const [shippingAddress, setShippingAddress] = useState({
     address: '',
+    street: '',
+    houseNumber: '',
     city: '',
     postalCode: '',
     country: '', // Default or fetched from user profile
@@ -122,6 +124,20 @@ const CheckoutPage = () => {
                 <Form.Label>{t('checkoutPage.shipping.address')}</Form.Label>
                 <Form.Control type="text" name="address" value={shippingAddress.address} onChange={handleShippingChange} required />
               </Form.Group>
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3" controlId="checkoutStreet">
+                    <Form.Label>{t('checkoutPage.shipping.street')}</Form.Label>
+                    <Form.Control type="text" name="street" value={shippingAddress.street} onChange={handleShippingChange} required />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3" controlId="checkoutHouseNumber">
+                    <Form.Label>{t('checkoutPage.shipping.houseNumber')}</Form.Label>
+                    <Form.Control type="text" name="houseNumber" value={shippingAddress.houseNumber} onChange={handleShippingChange} required />
+                  </Form.Group>
+                </Col>
+              </Row>
               <Row>
                 <Col md={6}>
                   <Form.Group className="mb-3" controlId="checkoutCity">
