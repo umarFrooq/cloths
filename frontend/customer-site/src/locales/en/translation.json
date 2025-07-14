@@ -311,5 +311,35 @@
     },
     "placingOrder": "Placing Order...",
     "placeOrderButton": "Place Order"
+  },
+  "accountPage": {
+    "welcome": "Welcome",
+    "redirectingToLogin": "Redirecting to login...",
+    "nav": {
+      "profile": "Profile",
+      "orders": "My Orders",
+      "addresses": "Addresses",
+      "logout": "Logout"
+    },
+    "profile": {
+      "title": "Profile Details",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "username": "Username",
+      "email": "Email",
+      "updateSuccess": "Profile updated successfully.",
+      "updateErrorNetwork": "A network error occurred. Please try again.",
+      "saving": "Saving...",
+      "saveButton": "Save Changes"
+    },
+    "orders": {
+      "title": "Order History",
+      "placeholder": "Your past orders will be listed here.",
+      "viewAllLink": "View All Orders"
+    },
+    "addresses": {
+      "title": "Manage Addresses",
+      "placeholder": "Your saved addresses will be shown here."
+    }
   }
 }

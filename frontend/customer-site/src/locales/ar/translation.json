@@ -321,5 +321,35 @@
     },
     "placingOrder": "جارِ إرسال الطلب...",
     "placeOrderButton": "إرسال الطلب"
+  },
+  "accountPage": {
+    "welcome": "مرحباً",
+    "redirectingToLogin": "جارِ إعادة توجيهك إلى صفحة تسجيل الدخول...",
+    "nav": {
+      "profile": "الملف الشخصي",
+      "orders": "طلباتي",
+      "addresses": "العناوين",
+      "logout": "تسجيل الخروج"
+    },
+    "profile": {
+      "title": "تفاصيل الملف الشخصي",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "username": "اسم المستخدم",
+      "email": "البريد الإلكتروني",
+      "updateSuccess": "تم تحديث الملف الشخصي بنجاح.",
+      "updateErrorNetwork": "حدث خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+      "saving": "جارِ الحفظ...",
+      "saveButton": "حفظ التغييرات"
+    },
+    "orders": {
+      "title": "سجل الطلبات",
+      "placeholder": "سيتم عرض طلباتك السابقة هنا.",
+      "viewAllLink": "عرض كل الطلبات"
+    },
+    "addresses": {
+      "title": "إدارة العناوين",
+      "placeholder": "سيتم عرض عناوينك المحفوظة هنا."
+    }
   }
 }
