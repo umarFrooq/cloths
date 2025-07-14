@@ -25,7 +25,7 @@ const sendEmail = async (options) => {
 
   // 2) Define the email options
   const mailOptions = {
-    from: `"${process.env.EMAIL_FROM_NAME || 'Your App Name'}" <${process.env.EMAIL_FROM_ADDRESS || 'noreply@example.com'}>`,
+    from: `${process.env.EMAIL_FROM }>`,
     to: options.email, // The recipient's email address
     subject: options.subject,
     text: options.message, // Plain text body
