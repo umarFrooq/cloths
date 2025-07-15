@@ -39,7 +39,7 @@
   font-size: 1rem; /* Slightly smaller title */
   font-weight: 600;
   color: #212529; /* Bootstrap's default text color */
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.1rem;
   /* Prevent title from taking too many lines */
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Limit to 2 lines */
@@ -51,7 +51,7 @@
 
 .product-card-description {
   font-size: 0.875rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.3rem;
   /* Limit description lines */
   display: -webkit-box;
   -webkit-line-clamp: 3; /* Limit to 3 lines */

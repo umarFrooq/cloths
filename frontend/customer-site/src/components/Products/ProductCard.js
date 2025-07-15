@@ -33,12 +33,12 @@ const ProductCard = ({ product }) => {
             className="product-card-img"
           />
           <Card.Body className="d-flex flex-column">
-            <Card.Title className="product-card-title h5">{name}</Card.Title>
+            <Card.Title className="product-card-title">{name}</Card.Title>
             <Card.Text className="product-card-description text-muted small flex-grow-1">
               {description.substring(0, 70) + (description.length > 70 ? '...' : '')}
             </Card.Text>
-            <div className="mt-auto product-card-footer">
-              <p className="h5 product-price mb-0">{formatPrice(product.price)}</p>
+            <div className=" product-card-footer">
+              <p className=" product-price mb-0">{formatPrice(product.price)}</p>
               {/* "View Details" button can be part of the link or an explicit button if needed */}
             </div>
           </Card.Body>
