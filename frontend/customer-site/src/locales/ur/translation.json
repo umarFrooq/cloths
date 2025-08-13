@@ -95,8 +95,14 @@
       "fetchNetwork": "مصنوعات حاصل کرنے کے دوران نیٹ ورک میں خرابی پیش آئی"
     },
     "filters": {
+      "title": "فلٹرز",
       "category": "زمرہ کے لحاظ سے فلٹر کریں:",
       "allCategories": "تمام زمرے",
+      "priceRange": "قیمت کی حد",
+      "minPrice": "کم سے کم",
+      "maxPrice": "زیادہ سے زیادہ",
+      "applyPrice": "لاگو کریں",
+      "brand": "برانڈ",
       "sortBy": "ترتیب دیں:",
       "sortNewest": "تازہ ترین",
       "sortPriceAsc": "قیمت: کم سے زیادہ",

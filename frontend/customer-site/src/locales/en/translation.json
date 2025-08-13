@@ -95,8 +95,14 @@
       "fetchNetwork": "A network error occurred while fetching products."
     },
     "filters": {
+      "title": "Filters",
       "category": "Filter by Category:",
       "allCategories": "All Categories",
+      "priceRange": "Price Range",
+      "minPrice": "Min",
+      "maxPrice": "Max",
+      "applyPrice": "Apply",
+      "brand": "Brand",
       "sortBy": "Sort By:",
       "sortNewest": "Newest",
       "sortPriceAsc": "Price: Low to High",

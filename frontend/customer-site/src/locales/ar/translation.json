@@ -148,8 +148,14 @@
       "fetchNetwork": "حدث خطأ في الشبكة أثناء جلب المنتجات."
     },
     "filters": {
+      "title": "الفلاتر",
       "category": "تصفية حسب الفئة:",
       "allCategories": "جميع الفئات",
+      "priceRange": "نطاق السعر",
+      "minPrice": "الأدنى",
+      "maxPrice": "الأقصى",
+      "applyPrice": "تطبيق",
+      "brand": "الماركة",
       "sortBy": "ترتيب حسب:",
       "sortNewest": "الأحدث",
       "sortPriceAsc": "السعر: من الأقل إلى الأعلى",

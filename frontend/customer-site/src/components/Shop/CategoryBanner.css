@@ -1,0 +1,11 @@
+.category-banner {
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  transition: background-image 0.5s ease-in-out;
+}
+
+.category-banner h1 {
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}

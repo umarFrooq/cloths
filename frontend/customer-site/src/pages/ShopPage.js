@@ -5,6 +5,8 @@ import { Container, Row, Col, Spinner, Alert, Pagination, Form } from 'react-boo
 import { useSearchParams } from 'react-router-dom'; // useNavigate removed, setSearchParams updates URL
 import { getProducts, getCategories } from '../services/apiService';
 import ProductCard from '../components/Products/ProductCard';
+import FilterSidebar from '../components/Shop/FilterSidebar';
+import CategoryBanner from '../components/Shop/CategoryBanner';
 // import './ShopPage.css'; // Optional for specific styling
 
 const ShopPage = () => {
@@ -21,6 +23,11 @@ const ShopPage = () => {
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || '-createdAt'); // Default sort: newest
+  const [selectedBrands, setSelectedBrands] = useState(searchParams.getAll('brand') || []);
+  const [priceRange, setPriceRange] = useState({
+    min: searchParams.get('minPrice') || '',
+    max: searchParams.get('maxPrice') || '',
+  });
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page'), 10) || 1);
@@ -48,6 +55,11 @@ const ShopPage = () => {
     setSearchTerm(searchParams.get('search') || '');
     setSortBy(searchParams.get('sort') || '-createdAt');
     setCurrentPage(parseInt(searchParams.get('page'), 10) || 1);
+    setPriceRange({
+        min: searchParams.get('minPrice') || '',
+        max: searchParams.get('maxPrice') || '',
+    });
+    setSelectedBrands(searchParams.getAll('brand') || []);
   }, [searchParams]);
 
 
@@ -64,6 +76,9 @@ const ShopPage = () => {
         };
         if (selectedCategory) params.category = selectedCategory;
         if (searchTerm) params.search = searchTerm;
+        if (priceRange.min) params.minPrice = priceRange.min;
+        if (priceRange.max) params.maxPrice = priceRange.max;
+        if (selectedBrands.length > 0) params.brand = selectedBrands.join(',');
 
         const response = await getProducts(params);
         if (response.data && response.data.success) {
@@ -89,7 +104,7 @@ const ShopPage = () => {
     };
 
     fetchShopProducts();
-  }, [selectedCategory, searchTerm, sortBy, currentPage, i18n.language, t]);
+  }, [selectedCategory, searchTerm, sortBy, currentPage, i18n.language, t, priceRange.min, priceRange.max, selectedBrands]);
 
   // Function to update URL search params, which triggers the useEffect above
   const updateFiltersInUrl = (newFilters) => {
@@ -116,6 +131,22 @@ const ShopPage = () => {
     updateFiltersInUrl({ sort: e.target.value, page: '1' });
   };
 
+  const handlePriceChange = (field, value) => {
+    setPriceRange(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePriceFilterSubmit = () => {
+    updateFiltersInUrl({ minPrice: priceRange.min, maxPrice: priceRange.max, page: '1' });
+  };
+
+  const handleBrandChange = (brand) => {
+    const newBrands = selectedBrands.includes(brand)
+      ? selectedBrands.filter(b => b !== brand)
+      : [...selectedBrands, brand];
+    setSelectedBrands(newBrands);
+    updateFiltersInUrl({ brand: newBrands, page: '1' });
+  };
+
   const handleSearchTermChange = (e) => { // Renamed from handleSearchChange to avoid conflict
     setSearchTerm(e.target.value); // Update local state for input control
   };
@@ -129,92 +160,73 @@ const ShopPage = () => {
     updateFiltersInUrl({ page: pageNumber.toString() });
   };
 
+  const currentCategory = categories.find(cat => cat._id === selectedCategory);
+
   return (
     <Container className="my-1 shop-page">
       <Helmet>
-        <title>{t('pageTitles.shop', 'المتجــــــر')}</title>
+        <title>{currentCategory ? (i18n.language === 'ar' ? currentCategory.name_ar : currentCategory.name_en) : t('pageTitles.shop', 'المتجــــــر')}</title>
       </Helmet>
-      {/* <Row className="mb-4">
-        <Col md={12}>
-          <h1 className="page-main-titable">{t('shopPage.title', 'المتجــــــر')}</h1>
-        </Col>
-      </Row> */}
 
-      <Row className="mb-4 p-3 bg-light rounded">
-        <Col md={4} className="mb-2 mb-md-0">
-          <Form.Group controlId="categoryFilter">
-            <Form.Label>{t('shopPage.filters.category', 'Filter by Category:')}</Form.Label>
-            <Form.Select value={selectedCategory} onChange={handleCategoryChange}>
-              <option value="">{t('shopPage.filters.allCategories', 'All Categories')}</option>
-              {categories.map(cat => (
-                <option key={cat._id} value={cat._id}>
-                  {i18n.language === 'ar' ? cat.name_ar : cat.name_en}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+      {currentCategory && <CategoryBanner category={currentCategory} />}
+
+      <Row>
+        <Col md={3}>
+          <FilterSidebar
+            categories={categories}
+            selectedCategory={selectedCategory}
+            sortBy={sortBy}
+            searchTerm={searchTerm}
+            onCategoryChange={handleCategoryChange}
+            onSortChange={handleSortChange}
+            onSearchChange={handleSearchTermChange}
+            onSearchSubmit={handleSearchSubmit}
+            priceRange={priceRange}
+            onPriceChange={handlePriceChange}
+            onPriceSubmit={handlePriceFilterSubmit}
+            selectedBrands={selectedBrands}
+            onBrandChange={handleBrandChange}
+          />
         </Col>
-        <Col md={4} className="mb-2 mb-md-0">
-          <Form.Group controlId="sortProducts">
-            <Form.Label>{t('shopPage.filters.sortBy', 'Sort By:')}</Form.Label>
-            <Form.Select value={sortBy} onChange={handleSortChange}>
-              <option value="-createdAt">{t('shopPage.filters.sortNewest', 'Newest')}</option>
-              <option value="price">{t('shopPage.filters.sortPriceAsc', 'Price: Low to High')}</option>
-              <option value="-price">{t('shopPage.filters.sortPriceDesc', 'Price: High to Low')}</option>
-              <option value="-averageRating">{t('shopPage.filters.sortPopularity', 'Popularity')}</option>
-            </Form.Select>
-          </Form.Group>
-        </Col>
-        <Col md={4}>
-          <Form onSubmit={handleSearchSubmit}>
-            <Form.Label>{t('shopPage.filters.searchProducts', 'Search Products:')}</Form.Label>
-            <Form.Control
-                type="search"
-                placeholder={t('shopPage.filters.searchPlaceholder', 'Enter keyword...')}
-                value={searchTerm} // Controlled input
-                onChange={handleSearchTermChange}
-            />
-            {/* Submit on enter or by a button if added */}
-          </Form>
+        <Col md={9}>
+          {loading && (
+            <div className="text-center my-5">
+              <Spinner animation="border" /> <p>{t('shopPage.loadingProducts', 'Loading products...')}</p>
+            </div>
+          )}
+          {error && <Alert variant="danger">{error}</Alert>}
+
+          {!loading && !error && products.length === 0 && (
+            <Alert variant="info">{t('shopPage.noProductsFound', 'No products found matching your criteria.')}</Alert>
+          )}
+
+          {!loading && !error && products.length > 0 && (
+            <>
+              <p className="text-muted mb-3">
+                {t('shopPage.resultsCount', 'Showing {{count}} of {{total}} products', { count: products.length, total: totalProducts })}
+              </p>
+              <Row>
+                {products.map(product => (
+                  <ProductCard key={product._id} product={product} />
+                ))}
+              </Row>
+              {totalPages > 1 && (
+                <Pagination className="justify-content-center mt-4">
+                  {[...Array(totalPages).keys()].map(number => (
+                    <Pagination.Item
+                        key={number + 1}
+                        active={number + 1 === currentPage}
+                        onClick={() => handlePageChange(number + 1)}
+                    >
+                      {number + 1}
+                    </Pagination.Item>
+                  ))}
+                </Pagination>
+              )}
+            </>
+          )}
         </Col>
       </Row>
-
-      {loading && (
-        <div className="text-center my-5">
-          <Spinner animation="border" /> <p>{t('shopPage.loadingProducts', 'Loading products...')}</p>
-        </div>
-      )}
-      {error && <Alert variant="danger">{error}</Alert>}
-
-      {!loading && !error && products.length === 0 && (
-        <Alert variant="info">{t('shopPage.noProductsFound', 'No products found matching your criteria.')}</Alert>
-      )}
-
-      {!loading && !error && products.length > 0 && (
-        <>
-          <p className="text-muted mb-3">
-            {t('shopPage.resultsCount', 'Showing {{count}} of {{total}} products', { count: products.length, total: totalProducts })}
-          </p>
-          <Row>
-            {products.map(product => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </Row>
-          {totalPages > 1 && (
-            <Pagination className="justify-content-center mt-4">
-              {[...Array(totalPages).keys()].map(number => (
-                <Pagination.Item
-                    key={number + 1}
-                    active={number + 1 === currentPage}
-                    onClick={() => handlePageChange(number + 1)}
-                >
-                  {number + 1}
-                </Pagination.Item>
-              ))}
-            </Pagination>
-          )}
-        </>
-      )}
     </Container>
   );
 };
