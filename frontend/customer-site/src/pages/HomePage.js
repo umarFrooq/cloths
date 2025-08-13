@@ -136,16 +136,15 @@ const HomePage = () => {
       </Helmet>
 
       <HeroSection />
-      {/* <ValuePropsSection />  */}
+      <ValuePropsSection />
 
       {/* Language switcher removed from here, as it's in the Navbar */}
 
       <CategoriesDisplay />
 
       <FeaturedProductsSection />
-      <ValuePropsSection /> {/* Added this section */}
-      {/* Add other homepage sections here as they are built */}
-      {/* e.g., Special Offer Banner, Most Popular Now, etc. */}
+
+      <SpecialOfferBanner />
 
     </div>
   );

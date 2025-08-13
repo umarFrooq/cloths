@@ -1,15 +1,16 @@
 import React from 'react';
 // import React, { useState } from 'react'; // Added useState
 import { useState, useEffect } from 'react'; // Added useEffect
-import { Navbar, Nav, Container, Button, Form, InputGroup, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Container, Button, Form, InputGroup, Dropdown, NavDropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faUser, faShoppingCart, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Added faSignOutAlt
+import { faSearch, faUser, faShoppingCart, faHeart, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'; // Added faHeart, faSignOutAlt
 import { useTranslation } from 'react-i18next';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext'; // Import useCart
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher'; // Import LanguageSwitcher
+import { getCategories } from '../../services/apiService';
 import './Navbar.css';
 
 // import logo from '../../assets/images/logo.png';
@@ -21,8 +22,23 @@ const GlobalNavbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { user, isAuthenticated, logout } = useAuth();
   const { cartTotals } = useCart(); // Use CartContext for cart item count
+  const [categories, setCategories] = useState([]);
 
   const cartItemsCount = cartTotals.itemCount; // Get item count from cartTotals
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        if (response.data && response.data.success) {
+          setCategories(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -52,9 +68,17 @@ const GlobalNavbar = () => {
             <LinkContainer to="/">
               <Nav.Link>{t('nav.home', 'الرئيسية')}</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/shop">
-              <Nav.Link>{t('nav.shop', 'المتجــــــر')}</Nav.Link>
-            </LinkContainer>
+            <NavDropdown title={t('nav.shop', 'المتجــــــر')} id="shop-dropdown">
+              <LinkContainer to="/shop">
+                <NavDropdown.Item>{t('shopPage.filters.allCategories', 'All Categories')}</NavDropdown.Item>
+              </LinkContainer>
+              <NavDropdown.Divider />
+              {categories.map(category => (
+                <LinkContainer to={`/shop?category=${category.name.en.toLowerCase()}`} key={category._id}>
+                  <NavDropdown.Item>{currentLang === 'ar' ? category.name.ar : category.name.en}</NavDropdown.Item>
+                </LinkContainer>
+              ))}
+            </NavDropdown>
             <LinkContainer to="/projects">
               <Nav.Link>{t('nav.projects', 'مشاريعنا')}</Nav.Link>
             </LinkContainer>
@@ -124,6 +148,13 @@ const GlobalNavbar = () => {
                 </Dropdown.Menu>
               </Dropdown>
             )}
+
+            <LinkContainer to="/wishlist">
+              <Nav.Link className="icon-link wishlist-link me-lg-2 mb-2 mb-lg-0">
+                <FontAwesomeIcon icon={faHeart} size="lg" />
+                <span className="d-lg-none ms-2">{t('nav.wishlist', 'Wishlist')}</span>
+              </Nav.Link>
+            </LinkContainer>
 
             <LinkContainer to="/cart">
               <Nav.Link className="icon-link cart-link me-lg-2 mb-2 mb-lg-0">

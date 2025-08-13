@@ -8,6 +8,7 @@ import './App.css';
 
 // Import Page Components
 import HomePage from './pages/HomePage';
+import WishlistPage from './pages/WishlistPage';
 import ShopPage from './pages/ShopPage';
 import ProjectsPage from './pages/ProjectsPage';
 import AboutUsPage from './pages/AboutUsPage';
@@ -22,6 +23,8 @@ import OffersPage from './pages/OffersPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import SearchResultsPage from './pages/SearchResultsPage';
+import ShippingPolicyPage from './pages/ShippingPolicyPage';
+import ReturnsPolicyPage from './pages/ReturnsPolicyPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CheckoutPage from './pages/CheckoutPage'; // Import CheckoutPage
 import NotFoundPage from './pages/NotFoundPage';
@@ -54,6 +57,7 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage />} />
           <Route path="/contact-us" element={<ContactUsPage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/offers" element={<OffersPage />} />
 
           <Route path="/account/login" element={<LoginPage />} />
@@ -76,6 +80,8 @@ function App() {
           <Route path="/account/reset-password/:token" element={<ResetPasswordPage />} />
 
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/shipping-policy" element={<ShippingPolicyPage />} />
+          <Route path="/returns-policy" element={<ReturnsPolicyPage />} />
 
           {/* Add more routes as needed, e.g., for product details: /product/:id */}
 

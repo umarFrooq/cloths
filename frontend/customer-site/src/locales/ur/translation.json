@@ -20,6 +20,7 @@
     "register": "رجسٹر کریں",
     "privacyPolicy": "رازداری کی پالیسی",
     "cart": "ٹوکری",
+    "wishlist": "خواہش کی فہرست",
     "welcome": "خوش آمدید"
   },
   "home": "گھر",
@@ -45,7 +46,9 @@
     "emailPlaceholder": "اپنا ای میل درج کریں",
     "subscribeButton": "سبسکرائب کریں",
     "rightsReserved": "جملہ حقوق محفوظ ہیں.",
-    "developedBy": "ابراہیم عبد الناصر نے تیار کیا ہے۔"
+    "developedBy": "ابراہیم عبد الناصر نے تیار کیا ہے۔",
+    "shippingPolicy": "شپنگ پالیسی",
+    "returnsPolicy": "واپسی کی پالیسی"
   },
   "common": {
     "loading": "لوڈ ہو رہا ہے۔..",
@@ -61,7 +64,19 @@
     "register": "اکاؤنٹ بنائیں",
     "cart": "خریداری کی ٹوکری",
     "checkout": "چیک آؤٹ",
-    "projects": "ہمارے منصوبے"
+    "projects": "ہمارے منصوبے",
+    "wishlist": "خواہش کی فہرست",
+    "shippingPolicy": "شپنگ پالیسی",
+    "returnsPolicy": "واپسی کی پالیسی"
+  },
+  "shippingPolicy": {
+    "placeholder": "ہماری شپنگ پالیسی کے بارے میں تفصیلات یہاں درج کی جائیں گی۔"
+  },
+  "returnsPolicy": {
+    "placeholder": "ہماری واپسی کی پالیسی کے بارے میں تفصیلات یہاں درج کی جائیں گی۔"
+  },
+  "wishlist": {
+    "placeholder": "آپ کی خواہش کی فہرست خالی ہے۔"
   },
   "projectsPage": {
     "title": "ہمارے منصوبے",

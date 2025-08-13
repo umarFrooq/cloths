@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'; // Using Link from react-router-dom
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'; // Import WhatsApp icon
+import { faWhatsapp, faInstagram, faTiktok } from '@fortawesome/free-brands-svg-icons'; // Import WhatsApp icon
 
 import './Footer.css'; // We'll create this for custom styles
 
@@ -49,12 +49,12 @@ const Footer = () => {
                   <span className="ms-2 d-inline-block d-md-none">{t('footer.whatsapp', 'WhatsApp')}</span>
                 </a>
                 {/* Add other social media links here if desired */}
-                {/* <a href="https" target="_blank" rel="noopener noreferrer" className="footer-link social-icon-link ms-2">
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-link social-icon-link ms-2">
                   <FontAwesomeIcon icon={faInstagram} size="lg" />
                 </a>
-                <a href="https" target="_blank" rel="noopener noreferrer" className="footer-link social-icon-link ms-2">
+                <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="footer-link social-icon-link ms-2">
                   <FontAwesomeIcon icon={faTiktok} size="lg" />
-                </a> */}
+                </a>
               </Nav.Item>
             </Nav>
           </Col>
@@ -76,6 +76,18 @@ const Footer = () => {
               </Nav.Item>
               <Nav.Item>
                 <Link to="/privacy-policy" className="footer-link">{t('nav.privacyPolicy', 'سياسة الخصوصية')}</Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Link to="/about-us" className="footer-link">{t('nav.aboutUs', 'من نحن')}</Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Link to="/contact-us" className="footer-link">{t('nav.contactUs', 'تواصل معنا')}</Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Link to="/shipping-policy" className="footer-link">{t('footer.shippingPolicy', 'Shipping Policy')}</Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Link to="/returns-policy" className="footer-link">{t('footer.returnsPolicy', 'Returns Policy')}</Link>
               </Nav.Item>
             </Nav>
           </Col>

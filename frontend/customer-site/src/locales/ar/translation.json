@@ -20,6 +20,7 @@
     "register": "إنشاء حساب",
     "privacyPolicy": "سياسة الخصوصية",
     "cart": "سلة المشتريات",
+    "wishlist": "قائمة الرغبات",
     "welcome": "مرحباً"
   },
   "home": "الرئيسية",
@@ -45,7 +46,9 @@
     "emailPlaceholder": "ادخل بريدك الالكتروني",
     "subscribeButton": "اشتراك",
     "rightsReserved": "جميع الحقوق محفوظة.",
-    "developedBy": "تم التطوير بواسطة ابراهيم عبد الناصر"
+    "developedBy": "تم التطوير بواسطة ابراهيم عبدالناصر",
+    "shippingPolicy": "سياسة الشحن",
+    "returnsPolicy": "سياسة الإسترجاع"
   },
   "common": {
     "loading": "جار التحميل...",
@@ -61,7 +64,19 @@
     "register": "إنشاء حساب جديد",
     "cart": "سلة المشتريات",
     "checkout": "إتمام الطلب",
-    "projects": "مشاريعنا"
+    "projects": "مشاريعنا",
+    "wishlist": "قائمة الرغبات",
+    "shippingPolicy": "سياسة الشحن",
+    "returnsPolicy": "سياسة الإسترجاع"
+  },
+  "shippingPolicy": {
+    "placeholder": "سيتم إدراج تفاصيل حول سياسة الشحن الخاصة بنا هنا."
+  },
+  "returnsPolicy": {
+    "placeholder": "سيتم إدراج تفاصيل حول سياسة الإرجاع الخاصة بنا هنا."
+  },
+  "wishlist": {
+    "placeholder": "قائمة رغباتك فارغة."
   },
   "projectsPage": {
     "title": "مشاريعنا",

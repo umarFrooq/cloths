@@ -20,6 +20,7 @@
     "register": "Register",
     "privacyPolicy": "Privacy Policy",
     "cart": "Cart",
+    "wishlist": "Wishlist",
     "welcome": "Welcome"
   },
   "home": "Home",
@@ -45,7 +46,9 @@
     "emailPlaceholder": "Enter your email",
     "subscribeButton": "Subscribe",
     "rightsReserved": "All rights reserved.",
-    "developedBy": "Developed by Ibrahim Abd Nasser"
+    "developedBy": "Developed by Ibrahim Abd Nasser",
+    "shippingPolicy": "Shipping Policy",
+    "returnsPolicy": "Returns Policy"
   },
   "common": {
     "loading": "Loading...",
@@ -61,7 +64,19 @@
     "register": "Create Account",
     "cart": "Shopping Cart",
     "checkout": "Checkout",
-    "projects": "Our Projects"
+    "projects": "Our Projects",
+    "wishlist": "Wishlist",
+    "shippingPolicy": "Shipping Policy",
+    "returnsPolicy": "Returns Policy"
+  },
+  "shippingPolicy": {
+    "placeholder": "Details about our shipping policy will be listed here."
+  },
+  "returnsPolicy": {
+    "placeholder": "Details about our returns policy will be listed here."
+  },
+  "wishlist": {
+    "placeholder": "Your wishlist is empty."
   },
   "projectsPage": {
     "title": "Our Projects",
