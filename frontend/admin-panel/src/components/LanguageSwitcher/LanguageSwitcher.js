@@ -43,6 +43,13 @@ const LanguageSwitcher = () => {
       >
         العربية (Arabic)
       </button>
+      <button
+        style={i18n.language === 'ur' ? activeButtonSyle : buttonStyle}
+        onClick={() => changeLanguage('ur')}
+        disabled={i18n.language === 'ur'}
+      >
+        اردو (Urdu)
+      </button>
       <p>{t('currentLanguage')}</p>
       {/* The "Switch to X" button from translation file is a bit redundant now */}
       {/* <button onClick={() => changeLanguage(i18n.language === 'en' ? 'ar' : 'en')}>
