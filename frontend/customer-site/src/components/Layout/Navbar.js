@@ -74,7 +74,7 @@ const GlobalNavbar = () => {
               </LinkContainer>
               <NavDropdown.Divider />
               {categories.map(category => (
-                <LinkContainer to={`/shop?category=${category._id}`} key={category._id}>
+                <LinkContainer to={{ pathname: "/shop", search: `?category=${category._id}` }} key={category._id}>
                   <NavDropdown.Item>{currentLang === 'ar' ? category.name_ar : category.name_en}</NavDropdown.Item>
                 </LinkContainer>
               ))}
