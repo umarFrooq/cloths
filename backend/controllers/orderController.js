@@ -54,16 +54,21 @@ exports.createOrder = async (req, res, next) => {
     // or recalculating them entirely on the backend. Let's assume client sends them for now.
     // If itemsPrice from client differs significantly from calculatedItemsPrice, could raise an error.
 
+    // Server-side calculation for shipping and total price
+    const FREE_SHIPPING_THRESHOLD = 200;
+    const STANDARD_SHIPPING_FEE = 30;
+    const serverCalculatedShippingPrice = itemsPrice > FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_FEE;
+    const serverCalculatedTotalPrice = itemsPrice + (taxPrice || 0) + serverCalculatedShippingPrice;
+
     const order = new Order({
       user: req.user.id,
       orderItems: processedOrderItems, // Use processed items
       shippingAddress,
-      shippingAddress,
       paymentMethod,
       itemsPrice,
       taxPrice: taxPrice || 0,
-      shippingPrice: shippingPrice || 0,
-      totalPrice,
+      shippingPrice: serverCalculatedShippingPrice, // Use server-calculated shipping price
+      totalPrice: serverCalculatedTotalPrice, // Use server-calculated total price
       // isPaid, paidAt will be updated after successful payment
       // orderStatus default is 'Pending'
     });

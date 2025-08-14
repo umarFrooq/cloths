@@ -25,10 +25,14 @@ export const CartProvider = ({ children }) => {
             const price = item.product && typeof item.product.price === 'number' ? item.product.price : 0;
             return sum + (item.quantity * price);
         }, 0);
-        // TODO: Add tax and shipping calculation if needed
-        const tax = 0; // Placeholder
-        const shipping = 0; // Placeholder
+
+        const FREE_SHIPPING_THRESHOLD = 200; // 200 SAR for free shipping
+        const STANDARD_SHIPPING_FEE = 30; // 30 SAR standard shipping
+
+        const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_FEE;
+        const tax = 0; // Placeholder for now
         const total = subtotal + tax + shipping;
+
         return { itemCount, subtotal, tax, shipping, total };
     };
 
