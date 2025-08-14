@@ -57,7 +57,13 @@
     "cancel": "Cancel",
     "save": "Save",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "chat": "Chat"
+  },
+  "whatsapp": {
+    "defaultMessage": "Hello! I have a question about your products.",
+    "ariaLabel": "Chat with us on WhatsApp",
+    "chatText": "Chat"
   },
   "pageTitles": {
     "home": "Home",

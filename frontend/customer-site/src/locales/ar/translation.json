@@ -57,7 +57,13 @@
     "cancel": "إلغاء",
     "save": "حفظ",
     "edit": "تعديل",
-    "delete": "حذف"
+    "delete": "حذف",
+    "chat": "محادثة"
+  },
+  "whatsapp": {
+    "defaultMessage": "مرحبا! لدي سؤال حول منتجاتكم.",
+    "ariaLabel": "تواصل معنا عبر الواتساب",
+    "chatText": "محادثة"
   },
   "pageTitles": {
     "home": "الرئيسية",
