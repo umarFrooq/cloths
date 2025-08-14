@@ -244,6 +244,7 @@
     "checkoutButton": "إتمام الشراء",
     "skuLabel": "رمز SKU",
     "tagsLabel": "الوسوم",
+    "deliveryEstimate": "التسليم المتوقع: 2-4 أيام عمل",
     "keyFeaturesTitle": "الميزات الرئيسية",
     "reviews": {
       "errorFetchDefault": "لا يمكن تحميل التقييمات.",

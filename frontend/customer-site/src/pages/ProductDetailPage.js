@@ -305,6 +305,11 @@ const ProductDetailPage = () => {
             }
           </div>
 
+          <div className="delivery-estimate my-3">
+            <i className="fas fa-shipping-fast text-muted me-2"></i>
+            <span>{t('productDetailPage.deliveryEstimate', 'Estimated delivery: 2-4 business days')}</span>
+          </div>
+
           <p className="product-description lead">{productDescription}</p>
 
           {product.keyFeatures && product.keyFeatures.length > 0 && (

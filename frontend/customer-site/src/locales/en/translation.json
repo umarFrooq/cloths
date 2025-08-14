@@ -191,6 +191,7 @@
     "checkoutButton": "Checkout",
     "skuLabel": "SKU",
     "tagsLabel": "Tags",
+    "deliveryEstimate": "Estimated delivery: 2-4 business days",
     "keyFeaturesTitle": "Key Features",
     "reviews": {
       "errorFetchDefault": "Could not load reviews.",
