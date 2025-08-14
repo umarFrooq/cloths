@@ -55,7 +55,7 @@ exports.getProducts = async (req, res) => {
 
     // Fields to exclude from filtering (like pagination, sort, select, lang)
     // 'lang' is used for conditional logic (e.g., search fields) but not as a direct filter criterion on a 'lang' field.
-    const removeFields = ['select', 'sort', 'page', 'limit', 'lang'];
+    const removeFields = ['select', 'sort', 'page', 'limit', 'lang', 'sizes', 'colors'];
     removeFields.forEach(param => delete reqQuery[param]);
 
     // Create query string
@@ -67,6 +67,16 @@ exports.getProducts = async (req, res) => {
     // Base query - find active products
     let parsedQuery = JSON.parse(queryStr);
     parsedQuery.isActive = parsedQuery.isActive === undefined ? true : parsedQuery.isActive; // Default to active products
+
+    // Handle sizes and colors
+    if (req.query.sizes) {
+      const sizesArray = req.query.sizes.split(',');
+      parsedQuery.sizes = { $in: sizesArray };
+    }
+    if (req.query.colors) {
+      const colorsArray = req.query.colors.split(',');
+      parsedQuery.colors = { $in: colorsArray };
+    }
 
     // Language specific search (simple example, can be enhanced)
     // If a 'lang' query param is provided, we might prefer results in that language or search specific fields

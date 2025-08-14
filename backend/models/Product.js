@@ -67,6 +67,14 @@ const ProductSchema = new Schema({
     // unique: true, // Consider if SKU must be unique or if it's optional
     // sparse: true, // If unique and optional, use sparse index
   },
+  colors: {
+    type: [String],
+    default: [],
+  },
+  sizes: {
+    type: [String],
+    default: [],
+  },
   tags_en: [{ type: String, trim: true }],
   tags_ar: [{ type: String, trim: true }],
   slug_en: {

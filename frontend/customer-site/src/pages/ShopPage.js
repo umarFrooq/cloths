@@ -24,6 +24,8 @@ const ShopPage = () => {
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [sortBy, setSortBy] = useState(searchParams.get('sort') || '-createdAt'); // Default sort: newest
   const [selectedBrands, setSelectedBrands] = useState(searchParams.getAll('brand') || []);
+  const [selectedSizes, setSelectedSizes] = useState(searchParams.getAll('sizes') || []);
+  const [selectedColors, setSelectedColors] = useState(searchParams.getAll('colors') || []);
   const [priceRange, setPriceRange] = useState({
     min: searchParams.get('minPrice') || '',
     max: searchParams.get('maxPrice') || '',
@@ -60,6 +62,8 @@ const ShopPage = () => {
         max: searchParams.get('maxPrice') || '',
     });
     setSelectedBrands(searchParams.getAll('brand') || []);
+    setSelectedSizes(searchParams.getAll('sizes') || []);
+    setSelectedColors(searchParams.getAll('colors') || []);
   }, [searchParams]);
 
 
@@ -79,6 +83,8 @@ const ShopPage = () => {
         if (priceRange.min) params.minPrice = priceRange.min;
         if (priceRange.max) params.maxPrice = priceRange.max;
         if (selectedBrands.length > 0) params.brand = selectedBrands.join(',');
+        if (selectedSizes.length > 0) params.sizes = selectedSizes.join(',');
+        if (selectedColors.length > 0) params.colors = selectedColors.join(',');
 
         const response = await getProducts(params);
         if (response.data && response.data.success) {
@@ -104,7 +110,7 @@ const ShopPage = () => {
     };
 
     fetchShopProducts();
-  }, [selectedCategory, searchTerm, sortBy, currentPage, i18n.language, t, priceRange.min, priceRange.max, selectedBrands]);
+  }, [selectedCategory, searchTerm, sortBy, currentPage, i18n.language, t, priceRange.min, priceRange.max, selectedBrands, selectedSizes, selectedColors]);
 
   // Function to update URL search params, which triggers the useEffect above
   const updateFiltersInUrl = (newFilters) => {
@@ -147,6 +153,22 @@ const ShopPage = () => {
     updateFiltersInUrl({ brand: newBrands, page: '1' });
   };
 
+  const handleSizeChange = (size) => {
+    const newSizes = selectedSizes.includes(size)
+      ? selectedSizes.filter(s => s !== size)
+      : [...selectedSizes, size];
+    setSelectedSizes(newSizes);
+    updateFiltersInUrl({ sizes: newSizes, page: '1' });
+  };
+
+  const handleColorChange = (color) => {
+    const newColors = selectedColors.includes(color)
+      ? selectedColors.filter(c => c !== color)
+      : [...selectedColors, color];
+    setSelectedColors(newColors);
+    updateFiltersInUrl({ colors: newColors, page: '1' });
+  };
+
   const handleSearchTermChange = (e) => { // Renamed from handleSearchChange to avoid conflict
     setSearchTerm(e.target.value); // Update local state for input control
   };
@@ -186,6 +208,10 @@ const ShopPage = () => {
             onPriceSubmit={handlePriceFilterSubmit}
             selectedBrands={selectedBrands}
             onBrandChange={handleBrandChange}
+            selectedSizes={selectedSizes}
+            onSizeChange={handleSizeChange}
+            selectedColors={selectedColors}
+            onColorChange={handleColorChange}
           />
         </Col>
         <Col md={9}>

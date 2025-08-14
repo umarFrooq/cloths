@@ -16,6 +16,10 @@ const FilterSidebar = ({
   onPriceSubmit,
   selectedBrands,
   onBrandChange,
+  selectedSizes,
+  onSizeChange,
+  selectedColors,
+  onColorChange,
 }) => {
   const { t, i18n } = useTranslation();
 
@@ -59,6 +63,36 @@ const FilterSidebar = ({
             label={brand}
             checked={selectedBrands.includes(brand)}
             onChange={() => onBrandChange(brand)}
+          />
+        ))}
+      </Form.Group>
+
+      {/* Size Filter */}
+      <Form.Group className="mb-3">
+        <Form.Label>{t('shopPage.filters.size', 'Size')}</Form.Label>
+        {['S', 'M', 'L', 'XL'].map(size => (
+          <Form.Check
+            type="checkbox"
+            key={size}
+            id={`size-${size}`}
+            label={size}
+            checked={selectedSizes.includes(size)}
+            onChange={() => onSizeChange(size)}
+          />
+        ))}
+      </Form.Group>
+
+      {/* Color Filter */}
+      <Form.Group className="mb-3">
+        <Form.Label>{t('shopPage.filters.color', 'Color')}</Form.Label>
+        {['Red', 'Blue', 'Green', 'Black', 'White'].map(color => (
+          <Form.Check
+            type="checkbox"
+            key={color}
+            id={`color-${color}`}
+            label={color}
+            checked={selectedColors.includes(color)}
+            onChange={() => onColorChange(color)}
           />
         ))}
       </Form.Group>
