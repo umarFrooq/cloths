@@ -20,6 +20,7 @@ import OrdersPage from './pages/OrdersPage'; // For /account/orders specifically
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import CartPage from './pages/CartPage';
 import OffersPage from './pages/OffersPage';
+import BundlesPage from './pages/BundlesPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import SearchResultsPage from './pages/SearchResultsPage';
@@ -59,6 +60,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/offers" element={<OffersPage />} />
+          <Route path="/bundles" element={<BundlesPage />} />
 
           <Route path="/account/login" element={<LoginPage />} />
           <Route path="/account/register" element={<RegisterPage />} />

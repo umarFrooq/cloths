@@ -37,10 +37,14 @@ export const CartProvider = ({ children }) => {
     };
 
     const [cartTotals, setCartTotals] = useState(calculateTotals([]));
+    const [discount, setDiscount] = useState(0);
 
     useEffect(() => {
-        setCartTotals(calculateTotals(cartItems));
-    }, [cartItems]);
+        const newTotals = calculateTotals(cartItems);
+        newTotals.total -= discount;
+        newTotals.discount = discount;
+        setCartTotals(newTotals);
+    }, [cartItems, discount]);
 
     const fetchCart = useCallback(async () => {
         if (!isAuthenticated || !token) {
@@ -173,6 +177,36 @@ export const CartProvider = ({ children }) => {
     }, [user]);
 
 
+    const addBundleToCart = async (bundle) => {
+      if (!isAuthenticated || !token) {
+        setError('Please log in to add items to your cart.');
+        return false;
+      }
+      setLoading(true);
+      setError(null);
+      try {
+        for (const product of bundle.products) {
+          await apiAddItemToCart({ productId: product._id, quantity: 1 }, token);
+        }
+        const response = await apiGetCart(token);
+        if (response.data && response.data.success) {
+          setCartItems(response.data.data);
+          const individualTotal = bundle.products.reduce((sum, p) => sum + p.price, 0);
+          const bundleDiscount = individualTotal - bundle.bundlePrice;
+          setDiscount(bundleDiscount);
+          return true;
+        } else {
+          setError(response.data.message || 'Failed to add bundle to cart.');
+          return false;
+        }
+      } catch (err) {
+        setError(err.error || err.message || 'Error adding bundle to cart.');
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const value = {
         cartItems,
         cartTotals,
@@ -180,6 +214,7 @@ export const CartProvider = ({ children }) => {
         error,
         fetchCart, // Expose fetchCart if manual refresh is needed
         addToCart,
+        addBundleToCart,
         updateQuantity,
         removeFromCart,
         clearClientCart, // Expose the renamed clear cart function

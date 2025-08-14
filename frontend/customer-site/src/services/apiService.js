@@ -158,5 +158,9 @@ export const removeFromWishlist = (productId, token) => apiClient.delete(`/wishl
   headers: { Authorization: `Bearer ${token}` }
 });
 
+// --- Bundle APIs ---
+export const getBundles = () => apiClient.get('/bundles');
+export const getBundleById = (id) => apiClient.get(`/bundles/${id}`);
+
 
 export default apiClient;

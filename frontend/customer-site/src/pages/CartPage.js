@@ -150,6 +150,12 @@ const CartPage = () => {
                     <span>{t('cartPage.summary.tax', 'الضريبة')}</span>
                     <span>{formatPrice(cartTotals.tax)}</span>
                   </ListGroup.Item>
+                  {cartTotals.discount > 0 && (
+                    <ListGroup.Item className="d-flex justify-content-between text-success">
+                      <span>{t('cartPage.summary.discount', 'Discount')}</span>
+                      <span>-{formatPrice(cartTotals.discount)}</span>
+                    </ListGroup.Item>
+                  )}
                   <ListGroup.Item className="d-flex justify-content-between fw-bold h5">
                     <span>{t('cartPage.summary.total', 'المجموع الكلي')}</span>
                     <span>{formatPrice(cartTotals.total)}</span>
