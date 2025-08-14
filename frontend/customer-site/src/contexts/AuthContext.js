@@ -4,7 +4,11 @@ import {
     registerUser as apiRegisterUser,
     getMe as apiGetMe,
     logoutUser as apiLogoutUser,
-    updateUserDetails as apiUpdateUserDetails
+    updateUserDetails as apiUpdateUserDetails,
+    getAddresses as apiGetAddresses,
+    addAddress as apiAddAddress,
+    updateAddress as apiUpdateAddress,
+    deleteAddress as apiDeleteAddress
 } from '../services/apiService'; // Adjust path as needed
 
 const AuthContext = createContext(null);
@@ -40,63 +44,57 @@ export const AuthProvider = ({ children }) => {
         }
     }, []); // Runs only once on mount
 
-    // Effect 2: Validate token when it's set (either from initial load or login/register)
+    // Effect 2: Validate token and fetch user data
     useEffect(() => {
-        const validateToken = async () => {
-            if (token) {
-                // Show loading if this is the initial validation pass.
-                if (!authAttempted) {
-                    setOperationLoading(true);
-                }
+        const fetchUserAndAddresses = async (currentToken) => {
+            if (!authAttempted) setOperationLoading(true);
+            try {
+                const userResponse = await apiGetMe(currentToken);
+                if (userResponse.data && userResponse.data.success) {
+                    const userData = userResponse.data.data;
 
-                try {
-                    const response = await apiGetMe(token);
-                    if (response.data && response.data.success) {
-                        setUser(response.data.data);
-                        // Ensure localStorage is consistent
-                        localStorage.setItem('authUser', JSON.stringify(response.data.data));
-                        localStorage.setItem('authToken', token);
+                    // Now fetch addresses
+                    const addressResponse = await apiGetAddresses(currentToken);
+                    if (addressResponse.data && addressResponse.data.success) {
+                        userData.addresses = addressResponse.data.data;
                     } else {
-                        setUser(null);
-                        setToken(null);
-                        localStorage.removeItem('authToken');
-                        localStorage.removeItem('authUser');
+                        userData.addresses = [];
                     }
-                } catch (err) {
-                    console.error("Token validation error:", err);
+
+                    setUser(userData);
+                    localStorage.setItem('authUser', JSON.stringify(userData));
+                    localStorage.setItem('authToken', currentToken);
+                } else {
+                    // Token is invalid, clear everything
                     setUser(null);
                     setToken(null);
                     localStorage.removeItem('authToken');
                     localStorage.removeItem('authUser');
-                } finally {
-                    if (!authAttempted) {
-                        setAuthAttempted(true);
-                    }
-                    // Always turn off operationLoading if it was turned on by this effect.
-                    // Avoids issues if login/register also manage operationLoading.
-                    if (!authAttempted || operationLoading) {
-                        setOperationLoading(false);
-                    }
                 }
-            } else {
-                // No token, or token was cleared.
-                setUser(null); // Ensure user is null.
+            } catch (err) {
+                console.error("Token validation or data fetching error:", err);
+                setUser(null);
+                setToken(null);
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
+            } finally {
                 if (!authAttempted) {
-                    setAuthAttempted(true); // Mark auth as attempted if it wasn't.
+                    setAuthAttempted(true);
+                    setOperationLoading(false);
                 }
             }
         };
 
-        // Run validation if there's a token to validate,
-        // OR if auth hasn't been attempted yet (to correctly set authAttempted from a no-token state).
-        if (token || !authAttempted) {
-            validateToken();
-        } else if (authAttempted && !token && user !== null) {
-            // Edge case: if somehow auth is attempted, token is null, but user isn't. Correct it.
+        if (token) {
+            fetchUserAndAddresses(token);
+        } else {
+            // No token, ensure logged out state
             setUser(null);
+            if (!authAttempted) {
+                setAuthAttempted(true);
+            }
         }
-
-    }, [token, authAttempted]); // React to token changes and initial authAttempted state.
+    }, [token, authAttempted]);
 
     const login = useCallback(async (credentials) => {
         setOperationLoading(true);
@@ -222,6 +220,48 @@ export const AuthProvider = ({ children }) => {
 
     const isLoadingAuth = !authAttempted;
 
+    const addUserAddress = useCallback(async (addressData) => {
+        if (!token) throw new Error("Not authenticated");
+        setOperationLoading(true);
+        try {
+            await apiAddAddress(addressData, token);
+            await refreshUser(); // Refetch user to get updated address list
+        } catch (err) {
+            setError(err.error || err.message || "Failed to add address.");
+            throw err;
+        } finally {
+            setOperationLoading(false);
+        }
+    }, [token, refreshUser]);
+
+    const updateUserAddress = useCallback(async (addressId, addressData) => {
+        if (!token) throw new Error("Not authenticated");
+        setOperationLoading(true);
+        try {
+            await apiUpdateAddress(addressId, addressData, token);
+            await refreshUser();
+        } catch (err) {
+            setError(err.error || err.message || "Failed to update address.");
+            throw err;
+        } finally {
+            setOperationLoading(false);
+        }
+    }, [token, refreshUser]);
+
+    const deleteUserAddress = useCallback(async (addressId) => {
+        if (!token) throw new Error("Not authenticated");
+        setOperationLoading(true);
+        try {
+            await apiDeleteAddress(addressId, token);
+            await refreshUser();
+        } catch (err) {
+            setError(err.error || err.message || "Failed to delete address.");
+            throw err;
+        } finally {
+            setOperationLoading(false);
+        }
+    }, [token, refreshUser]);
+
     const value = {
         user,
         token,
@@ -234,6 +274,9 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateUser,
         refreshUser,
+        addUserAddress,
+        updateUserAddress,
+        deleteUserAddress,
         setError
     };
 

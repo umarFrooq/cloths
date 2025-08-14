@@ -124,4 +124,22 @@ export const clearCart = (token) => apiClient.delete('/cart', {
   headers: { Authorization: `Bearer ${token}` }
 });
 
+// --- Address APIs (Protected) ---
+export const getAddresses = (token) => apiClient.get('/addresses', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const addAddress = (addressData, token) => apiClient.post('/addresses', addressData, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const updateAddress = (id, addressData, token) => apiClient.put(`/addresses/${id}`, addressData, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const deleteAddress = (id, token) => apiClient.delete(`/addresses/${id}`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+
 export default apiClient;

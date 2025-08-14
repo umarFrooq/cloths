@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const AddressSchema = require('./Address');
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -44,9 +45,7 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  // For customers, could add:
-  // phone: { type: String, trim: true },
-  // addresses: [AddressSchema] // (If creating a sub-schema for addresses)
+  addresses: [AddressSchema],
   passwordResetToken: String,
   passwordResetExpire: Date,
   cart: [

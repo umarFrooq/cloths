@@ -90,10 +90,90 @@ const OrderHistory = () => {
     // TODO: Fetch and display order history using AuthContext token
     return <div><h4>{t('accountPage.orders.title', 'Order History')}</h4><p>{t('accountPage.orders.placeholder', 'Your past orders will be listed here.')}</p> <Link to="/account/orders">{t('accountPage.orders.viewAllLink', 'View All Orders')}</Link></div>;
 };
+import AddressForm from '../components/Account/AddressForm';
+import { Modal, Card, Badge } from 'react-bootstrap';
+
 const ManageAddresses = () => {
     const { t } = useTranslation();
-    // TODO: Implement address management
-    return <div><h4>{t('accountPage.addresses.title', 'Manage Addresses')}</h4><p>{t('accountPage.addresses.placeholder', 'Your saved addresses will be shown here.')}</p></div>;
+    const { user, addUserAddress, updateUserAddress, deleteUserAddress, operationLoading } = useAuth();
+    const [showModal, setShowModal] = useState(false);
+    const [editingAddress, setEditingAddress] = useState(null);
+
+    const handleShowModal = (address = null) => {
+        setEditingAddress(address);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setEditingAddress(null);
+    };
+
+    const handleSaveAddress = async (addressData) => {
+        if (editingAddress) {
+            await updateUserAddress(editingAddress._id, addressData);
+        } else {
+            await addUserAddress(addressData);
+        }
+        handleCloseModal();
+    };
+
+    const handleDeleteAddress = async (addressId) => {
+        if (window.confirm(t('accountPage.addresses.confirmDelete', 'Are you sure you want to delete this address?'))) {
+            await deleteUserAddress(addressId);
+        }
+    };
+
+    return (
+        <div>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h4>{t('accountPage.addresses.title', 'Manage Addresses')}</h4>
+                <Button variant="primary" onClick={() => handleShowModal()}>
+                    {t('accountPage.addresses.addNew', 'Add New Address')}
+                </Button>
+            </div>
+
+            {user?.addresses && user.addresses.length > 0 ? (
+                <Row>
+                    {user.addresses.map(addr => (
+                        <Col md={6} key={addr._id} className="mb-3">
+                            <Card>
+                                <Card.Body>
+                                    <Card.Text>
+                                        {addr.address}, {addr.street}<br/>
+                                        {addr.city}, {addr.postalCode}<br/>
+                                        {addr.country}<br/>
+                                        {t('checkoutPage.shipping.phone')}: {addr.phone}
+                                    </Card.Text>
+                                    {addr.isDefault && <Badge bg="success">{t('accountPage.addresses.default', 'Default')}</Badge>}
+                                </Card.Body>
+                                <Card.Footer>
+                                    <Button variant="link" onClick={() => handleShowModal(addr)}>{t('common.edit', 'Edit')}</Button>
+                                    <Button variant="link" className="text-danger" onClick={() => handleDeleteAddress(addr._id)}>{t('common.delete', 'Delete')}</Button>
+                                </Card.Footer>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            ) : (
+                <p>{t('accountPage.addresses.placeholder', 'Your saved addresses will be shown here.')}</p>
+            )}
+
+            <Modal show={showModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{editingAddress ? t('accountPage.addresses.editTitle', 'Edit Address') : t('accountPage.addresses.addTitle', 'Add New Address')}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <AddressForm
+                        address={editingAddress}
+                        onSave={handleSaveAddress}
+                        onCancel={handleCloseModal}
+                        loading={operationLoading}
+                    />
+                </Modal.Body>
+            </Modal>
+        </div>
+    );
 };
 
 

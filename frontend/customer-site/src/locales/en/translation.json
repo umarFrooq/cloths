@@ -53,7 +53,11 @@
   "common": {
     "loading": "Loading...",
     "optional": "Optional",
-    "submitting": "Submitting..."
+    "submitting": "Submitting...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "pageTitles": {
     "home": "Home",
@@ -304,6 +308,9 @@
       "orderDefault": "Failed to place your order. Please try again.",
       "orderNetwork": "A network error occurred. Please check your connection and try again."
     },
+    "noAddresses": "You have no saved addresses. Please add one.",
+    "addNewAddress": "Add New Address",
+    "addNewAddressTitle": "Add a New Shipping Address",
     "success": {
       "orderPlaced": "Order placed successfully! Order ID: {{orderId}}"
     },
@@ -360,7 +367,13 @@
     },
     "addresses": {
       "title": "Manage Addresses",
-      "placeholder": "Your saved addresses will be shown here."
+      "placeholder": "Your saved addresses will be shown here.",
+      "setDefault": "Set as default address",
+      "confirmDelete": "Are you sure you want to delete this address?",
+      "addNew": "Add New Address",
+      "default": "Default",
+      "editTitle": "Edit Address",
+      "addTitle": "Add New Address"
     }
   }
 }

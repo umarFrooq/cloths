@@ -6,14 +6,19 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { createOrder as apiCreateOrder } from '../services/apiService';
+import AddressForm from '../components/Account/AddressForm';
+import { Modal } from 'react-bootstrap';
+
 
 const CheckoutPage = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const navigate = useNavigate();
-  const { user, token, isAuthenticated, loading: authLoading } = useAuth();
+  const { user, token, isAuthenticated, loading: authLoading, addUserAddress, operationLoading } = useAuth();
   const { cartItems, cartTotals, clearClientCart, loading: cartLoading, error: cartError } = useCart();
 
+  const [selectedAddressId, setSelectedAddressId] = useState('');
+  const [showNewAddressModal, setShowNewAddressModal] = useState(false);
   const [shippingAddress, setShippingAddress] = useState({
     address: '',
     street: '',
@@ -27,11 +32,10 @@ const CheckoutPage = () => {
   const [status, setStatus] = useState({ loading: false, error: null, success: null });
 
   useEffect(() => {
-    // Pre-fill shipping from user profile if available (and if user wants to use it)
     if (user && user.addresses && user.addresses.length > 0) {
-      // Assuming user model might have an array of addresses, pick the default or first one
-      // For now, this is a placeholder as User model doesn't have addresses array yet.
-      // setShippingAddress(user.addresses[0]);
+        const defaultAddress = user.addresses.find(addr => addr.isDefault) || user.addresses[0];
+        setSelectedAddressId(defaultAddress._id);
+        setShippingAddress(defaultAddress);
     }
     if (!authLoading && !isAuthenticated) {
         navigate('/account/login?redirect=/checkout');
@@ -44,6 +48,18 @@ const CheckoutPage = () => {
 
   const handleShippingChange = (e) => {
     setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
+  };
+
+  const handleAddressSelect = (addressId) => {
+    setSelectedAddressId(addressId);
+    const selected = user.addresses.find(addr => addr._id === addressId);
+    setShippingAddress(selected);
+  };
+
+  const handleAddNewAddress = async (addressData) => {
+    await addUserAddress(addressData);
+    setShowNewAddressModal(false);
+    // The useEffect hook will find the new address and set it as selected
   };
 
   const handlePaymentMethodChange = (e) => {
@@ -120,46 +136,36 @@ const CheckoutPage = () => {
           <Row>
             <Col md={7} className="mb-4">
               <h4>{t('checkoutPage.shipping.title')}</h4>
-              <Form.Group className="mb-3" controlId="checkoutAddress">
-                <Form.Label>{t('checkoutPage.shipping.address')}</Form.Label>
-                <Form.Control type="text" name="address" value={shippingAddress.address} onChange={handleShippingChange} required />
-              </Form.Group>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3" controlId="checkoutStreet">
-                    <Form.Label>{t('checkoutPage.shipping.street')}</Form.Label>
-                    <Form.Control type="text" name="street" value={shippingAddress.street} onChange={handleShippingChange} required />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3" controlId="checkoutHouseNumber">
-                    <Form.Label>{t('checkoutPage.shipping.houseNumber')}</Form.Label>
-                    <Form.Control type="text" name="houseNumber" value={shippingAddress.houseNumber} onChange={handleShippingChange} required />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3" controlId="checkoutCity">
-                    <Form.Label>{t('checkoutPage.shipping.city')}</Form.Label>
-                    <Form.Control type="text" name="city" value={shippingAddress.city} onChange={handleShippingChange} required />
-                  </Form.Group>
-                </Col>
-                <Col md={6}>
-                  <Form.Group className="mb-3" controlId="checkoutPostalCode">
-                    <Form.Label>{t('checkoutPage.shipping.postalCode')}</Form.Label>
-                    <Form.Control type="text" name="postalCode" value={shippingAddress.postalCode} onChange={handleShippingChange} required />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Form.Group className="mb-3" controlId="checkoutCountry">
-                <Form.Label>{t('checkoutPage.shipping.country')}</Form.Label>
-                <Form.Control type="text" name="country" value={shippingAddress.country} onChange={handleShippingChange} required />
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="checkoutPhone">
-                <Form.Label>{t('checkoutPage.shipping.phone')}</Form.Label>
-                <Form.Control type="tel" name="phone" value={shippingAddress.phone} onChange={handleShippingChange} required />
-              </Form.Group>
+              {user?.addresses && user.addresses.length > 0 ? (
+                <div className="mb-3">
+                  {user.addresses.map(addr => (
+                    <Card key={addr._id} className={`mb-2 ${selectedAddressId === addr._id ? 'border-primary' : ''}`}>
+                      <Card.Body>
+                        <Form.Check
+                          type="radio"
+                          id={`addr-${addr._id}`}
+                          name="shippingAddress"
+                          checked={selectedAddressId === addr._id}
+                          onChange={() => handleAddressSelect(addr._id)}
+                          label={
+                            <div>
+                              <strong>{addr.address}, {addr.street}</strong><br/>
+                              {addr.city}, {addr.postalCode}, {addr.country}<br/>
+                              {addr.phone}
+                            </div>
+                          }
+                        />
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Alert variant="info">{t('checkoutPage.noAddresses', 'You have no saved addresses. Please add one.')}</Alert>
+              )}
+
+              <Button variant="secondary" onClick={() => setShowNewAddressModal(true)}>
+                {t('checkoutPage.addNewAddress', 'Add New Address')}
+              </Button>
 
               <h4 className="mt-4">{t('checkoutPage.payment.title')}</h4>
               <Form.Group className="mb-3">
@@ -230,6 +236,19 @@ const CheckoutPage = () => {
           </Row>
         </Form>
       )}
+
+      <Modal show={showNewAddressModal} onHide={() => setShowNewAddressModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>{t('checkoutPage.addNewAddressTitle', 'Add a New Shipping Address')}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AddressForm
+            onSave={handleAddNewAddress}
+            onCancel={() => setShowNewAddressModal(false)}
+            loading={operationLoading}
+          />
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };
