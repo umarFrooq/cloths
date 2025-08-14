@@ -7,6 +7,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext"; // Import CartProvider
+import { WishlistProvider } from "./contexts/WishlistContext";
 import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter
 
 import './locales/i18n';
@@ -17,11 +18,13 @@ root.render(
     <HelmetProvider>
       <AuthProvider>
         <CartProvider> {/* Wrap App/Router with CartProvider, inside AuthProvider */}
-          <BrowserRouter>
-            <Suspense fallback={<div>Loading...</div>}>
-              <App />
-            </Suspense>
-          </BrowserRouter>
+          <WishlistProvider>
+            <BrowserRouter>
+              <Suspense fallback={<div>Loading...</div>}>
+                <App />
+              </Suspense>
+            </BrowserRouter>
+          </WishlistProvider>
         </CartProvider>
       </AuthProvider>
     </HelmetProvider>

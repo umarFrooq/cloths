@@ -141,5 +141,18 @@ export const deleteAddress = (id, token) => apiClient.delete(`/addresses/${id}`,
   headers: { Authorization: `Bearer ${token}` }
 });
 
+// --- Wishlist APIs (Protected) ---
+export const getWishlist = (token) => apiClient.get('/wishlist', {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const addToWishlist = (data, token) => apiClient.post('/wishlist', data, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
+export const removeFromWishlist = (productId, token) => apiClient.delete(`/wishlist/${productId}`, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
 
 export default apiClient;

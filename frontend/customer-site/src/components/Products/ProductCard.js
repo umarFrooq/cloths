@@ -1,12 +1,26 @@
 import React from 'react';
-import { Card, Col } from 'react-bootstrap'; // No Button needed if card is fully linked
+import { Card, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useWishlist } from '../../contexts/WishlistContext';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import './ProductCard.css'; // We'll create this for custom styles
 
 const ProductCard = ({ product }) => {
   const { i18n, t } = useTranslation();
   const currentLang = i18n.language;
+  const { isProductInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const inWishlist = isProductInWishlist(product._id);
+
+  const handleWishlistClick = (e) => {
+    e.preventDefault(); // Prevent link navigation
+    e.stopPropagation(); // Prevent card click event
+    if (inWishlist) {
+      removeFromWishlist(product._id);
+    } else {
+      addToWishlist(product._id);
+    }
+  };
 
   // Determine language-specific fields
   const name = currentLang === 'ar' ? product.name_ar : product.name_en;
@@ -25,6 +39,9 @@ const ProductCard = ({ product }) => {
     // Using Col here makes it easy to integrate into Bootstrap Rows
     <Col xs={12} sm={6} md={4} lg={3} className="mb-4 d-flex align-items-stretch product-col">
       <Card className="h-100 product-card shadow-sm">
+        <Button variant="link" className="wishlist-btn" onClick={handleWishlistClick}>
+          {inWishlist ? <FaHeart color="red" /> : <FaRegHeart />}
+        </Button>
         <Link to={`/product/${slug}`} className="product-card-link">
           <Card.Img
             variant="top"

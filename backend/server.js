@@ -79,6 +79,9 @@ app.use('/api/cart', cartRoutes);
 const addressRoutes = require('./routes/addressRoutes');
 app.use('/api/addresses', addressRoutes);
 
+const wishlistRoutes = require('./routes/wishlistRoutes');
+app.use('/api/wishlist', wishlistRoutes);
+
 // Upload routes
 const uploadRoutes = require('./routes/uploadRoutes');
 app.use('/api/v1/upload', uploadRoutes); // Using /api/v1 for versioning new routes
