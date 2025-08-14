@@ -185,6 +185,7 @@
     "checkoutButton": "چیک آؤٹ",
     "skuLabel": "SKU",
     "tagsLabel": "ٹیگز",
+    "keyFeaturesTitle": "اہم خصوصیات",
     "reviews": {
       "errorFetchDefault": "جائزے لوڈ نہیں کیے جا سکے",
       "errorFetchNetwork": "جائزے حاصل کرنے کے دوران نیٹ ورک میں خرابی پیش آئی",

@@ -238,6 +238,7 @@
     "checkoutButton": "إتمام الشراء",
     "skuLabel": "رمز SKU",
     "tagsLabel": "الوسوم",
+    "keyFeaturesTitle": "الميزات الرئيسية",
     "reviews": {
       "errorFetchDefault": "لا يمكن تحميل التقييمات.",
       "errorFetchNetwork": "حدث خطأ في الشبكة أثناء جلب التقييمات.",

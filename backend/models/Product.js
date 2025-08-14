@@ -42,6 +42,14 @@ const ProductSchema = new Schema({
     required: [true, 'Product price is required.'],
     min: [0, 'Price cannot be negative.'],
   },
+  originalPrice: {
+    type: Number,
+    min: [0, 'Price cannot be negative.'],
+  },
+  keyFeatures: {
+    type: [String],
+    default: [],
+  },
   category: {
     type: Schema.Types.ObjectId,
     ref: 'Category',

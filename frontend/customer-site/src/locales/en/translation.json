@@ -185,6 +185,7 @@
     "checkoutButton": "Checkout",
     "skuLabel": "SKU",
     "tagsLabel": "Tags",
+    "keyFeaturesTitle": "Key Features",
     "reviews": {
       "errorFetchDefault": "Could not load reviews.",
       "errorFetchNetwork": "A network error occurred while fetching reviews.",

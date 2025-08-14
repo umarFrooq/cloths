@@ -291,7 +291,12 @@ const ProductDetailPage = () => {
             <span className="ms-2 text-muted">({product.numReviews || 0} {t('productDetailPage.reviewsLink', 'reviews')})</span>
           </div>
 
-          <p className="product-price display-6 my-3">{formatPrice(product.price)}</p>
+          <div className="d-flex align-items-center my-3">
+            <p className="product-price display-6 me-3 mb-0">{formatPrice(product.price)}</p>
+            {product.originalPrice && product.originalPrice > product.price && (
+              <p className="product-original-price text-muted text-decoration-line-through mb-0">{formatPrice(product.originalPrice)}</p>
+            )}
+          </div>
 
           <div className="product-availability mb-3">
             {product.stock > 0
@@ -301,6 +306,19 @@ const ProductDetailPage = () => {
           </div>
 
           <p className="product-description lead">{productDescription}</p>
+
+          {product.keyFeatures && product.keyFeatures.length > 0 && (
+            <div className="mt-4">
+              <h5>{t('productDetailPage.keyFeaturesTitle', 'Key Features')}</h5>
+              <ListGroup variant="flush">
+                {product.keyFeatures.map((feature, index) => (
+                  <ListGroup.Item key={index} className="ps-0">
+                    <i className="fas fa-check-circle text-success me-2"></i>{feature}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </div>
+          )}
 
           {/* Add to Cart Section */}
           {product.stock > 0 && (
