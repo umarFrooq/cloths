@@ -5,6 +5,7 @@ const {
   getOrderById,
   updateOrderToPaid,
   updateOrderToDelivered,
+  confirmCODPayment,
   getMyOrders,
   getAllOrders,
   updateOrderStatus
@@ -30,6 +31,9 @@ router.route('/:id/pay')
 
 router.route('/:id/deliver')
   .put(authorize('admin', 'editor'), updateOrderToDelivered); // Admin/Editor marks as delivered
+
+router.route('/:id/cod-pay')
+    .put(authorize('admin', 'editor'), confirmCODPayment);
 
 router.route('/:id/status')
     .put(authorize('admin', 'editor'), updateOrderStatus); // Admin/Editor updates general status

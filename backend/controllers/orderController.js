@@ -99,6 +99,37 @@ exports.createOrder = async (req, res, next) => {
   }
 };
 
+// @desc    Confirm and update a COD order to paid
+// @route   PUT /api/orders/:id/cod-pay
+// @access  Private (Admin/Editor)
+exports.confirmCODPayment = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return next(new ErrorResponse(`Order not found with id of ${req.params.id}`, 404));
+    }
+
+    if (order.paymentMethod !== 'Cash on Delivery') {
+      return next(new ErrorResponse('This route is only for Cash on Delivery orders', 400));
+    }
+
+    if (order.isPaid) {
+      return next(new ErrorResponse('Order is already paid', 400));
+    }
+
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    order.orderStatus = 'Delivered'; // Assuming payment is collected upon delivery
+
+    const updatedOrder = await order.save();
+    res.status(200).json({ success: true, data: updatedOrder });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Get order by ID
 // @route   GET /api/orders/:id
 // @access  Private (Customer who owns order, or Admin)
@@ -172,9 +203,9 @@ exports.updateOrderToDelivered = async (req, res, next) => {
       return next(new ErrorResponse(`Order not found with id of ${req.params.id}`, 404));
     }
 
-    // Ensure order is paid before marking as delivered (optional, business logic dependent)
-    if (!order.isPaid) {
-        return next(new ErrorResponse('Order is not paid yet', 400));
+    // For non-COD orders, ensure they are paid before marking as delivered.
+    if (order.paymentMethod !== 'Cash on Delivery' && !order.isPaid) {
+        return next(new ErrorResponse('Order must be paid before it can be delivered', 400));
     }
 
     order.isDelivered = true;

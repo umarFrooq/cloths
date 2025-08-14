@@ -98,6 +98,10 @@ export const payOrder = (orderId, paymentData, token) => apiClient.put(`/orders/
   headers: { Authorization: `Bearer ${token}` }
 });
 
+export const confirmCODPayment = (orderId, token) => apiClient.put(`/orders/${orderId}/cod-pay`, {}, {
+  headers: { Authorization: `Bearer ${token}` }
+});
+
 
 // Add other API functions as needed (e.g., Cart APIs when ready)
 

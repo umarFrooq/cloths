@@ -3,13 +3,13 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Container, ListGroup, Alert, Spinner, Card, Badge } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom'; // Added useNavigate
-import { getMyOrders } from '../services/apiService';
+import { getMyOrders, confirmCODPayment as apiConfirmCODPayment } from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext'; // Import useAuth
 
 const OrdersPage = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
-  const { token, isAuthenticated, loading: authLoading } = useAuth(); // Get token and auth state
+  const { user, token, isAuthenticated, loading: authLoading } = useAuth(); // Get user role
   const navigate = useNavigate();
 
   const [orders, setOrders] = useState([]);
@@ -50,6 +50,19 @@ const OrdersPage = () => {
       style: 'currency',
       currency: 'SAR', // Assuming SAR, make this dynamic if needed
     }).format(price);
+  };
+
+  const handleConfirmCODPayment = async (orderId) => {
+    try {
+      await apiConfirmCODPayment(orderId, token);
+      // Refresh orders list
+      const response = await getMyOrders(token);
+      if (response.data && response.data.success) {
+        setOrders(response.data.data);
+      }
+    } catch (err) {
+      setError(err.error || err.message || 'Failed to confirm payment.');
+    }
   };
 
   const getOrderStatusBadge = (status) => {
@@ -119,6 +132,11 @@ const OrdersPage = () => {
                      {/* <Link to={`/account/orders/${order._id}`} className="btn btn-sm btn-outline-primary">
                         {t('ordersPage.viewDetailsButton', 'View Details')}
                     </Link> */}
+                    {user && (user.role === 'admin' || user.role === 'editor') && order.paymentMethod === 'Cash on Delivery' && !order.isPaid && (
+                      <Button variant="success" size="sm" className="mt-2" onClick={() => handleConfirmCODPayment(order._id)}>
+                        {t('ordersPage.confirmCODPayment', 'Confirm COD Payment')}
+                      </Button>
+                    )}
                 </Card.Body>
               </Card>
             </ListGroup.Item>
