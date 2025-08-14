@@ -6,6 +6,7 @@ import { Container, Row, Col, Card, Button, Spinner, Alert, Form, ListGroup, Bad
 import { getProductByIdentifier, getProductReviews, addProductReview } from '../services/apiService';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext'; // Import useCart
+import RelatedProducts from '../components/Products/RelatedProducts';
 // import './ProductDetailPage.css'; // Optional
 
 // Simple Image Gallery/Carousel (can be replaced with a library like react-image-gallery)
@@ -386,7 +387,7 @@ const ProductDetailPage = () => {
           </Col>
       </Row>
 
-      {/* TODO: Related Products Section */}
+      <RelatedProducts products={product.upsellProducts} title={t('productDetailPage.upsellTitle', 'You might also like...')} />
 
     </Container>
   );

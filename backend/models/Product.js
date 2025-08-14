@@ -101,6 +101,14 @@ const ProductSchema = new Schema({
     type: Number,
     default: 0,
   },
+  upsellProducts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+  }],
+  crossSellProducts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+  }],
   // Optional: Dimensions, weight for shipping
   // weight: { type: Number },
   // dimensions: {

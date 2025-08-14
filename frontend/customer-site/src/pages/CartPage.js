@@ -6,12 +6,38 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import RelatedProducts from '../components/Products/RelatedProducts';
+import { getProductByIdentifier } from '../services/apiService';
+import { useState, useEffect } from 'react';
 
 const CartPage = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.language;
   const { cartItems, cartTotals, loading, error, updateQuantity, removeFromCart, clearClientCart } = useCart();
   const navigate = useNavigate();
+  const [crossSellProducts, setCrossSellProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchCrossSellProducts = async () => {
+      if (cartItems.length > 0) {
+        const allCrossSellProducts = new Map();
+        for (const item of cartItems) {
+          try {
+            const response = await getProductByIdentifier(item.product._id);
+            if (response.data.success && response.data.data.crossSellProducts) {
+              for (const p of response.data.data.crossSellProducts) {
+                allCrossSellProducts.set(p._id, p);
+              }
+            }
+          } catch (error) {
+            console.error('Failed to fetch cross-sell products for item', item.product._id, error);
+          }
+        }
+        setCrossSellProducts(Array.from(allCrossSellProducts.values()));
+      }
+    };
+    fetchCrossSellProducts();
+  }, [cartItems]);
 
   const handleQuantityChange = async (productId, newQuantity) => {
     if (newQuantity < 1) { // Or handle 0 as remove, but backend currently allows 0 for removal in PUT
@@ -105,6 +131,7 @@ const CartPage = () => {
             <Button variant="outline-secondary" onClick={async () => await clearClientCart()} className="mt-3">
                 {t('cartPage.clearCartButton', 'إفراغ السلة')}
             </Button>
+            <RelatedProducts products={crossSellProducts} title={t('cartPage.crossSellTitle', 'Frequently bought with...')} />
           </Col>
           <Col lg={4}>
             <Card>

@@ -163,7 +163,10 @@ exports.getProductByIdentifier = async (req, res) => {
 
     // Check if identifier is a valid MongoDB ObjectId
     if (identifier.match(/^[0-9a-fA-F]{24}$/)) {
-      product = await Product.findOne({ _id: identifier, isActive: true }).populate('category', 'name_en name_ar');
+      product = await Product.findOne({ _id: identifier, isActive: true })
+        .populate('category', 'name_en name_ar')
+        .populate('upsellProducts')
+        .populate('crossSellProducts');
     }
 
     // If not found by ID, try by slug_en or slug_ar
@@ -171,7 +174,10 @@ exports.getProductByIdentifier = async (req, res) => {
       product = await Product.findOne({
         $or: [{ slug_en: identifier }, { slug_ar: identifier }],
         isActive: true
-      }).populate('category', 'name_en name_ar');
+      })
+        .populate('category', 'name_en name_ar')
+        .populate('upsellProducts')
+        .populate('crossSellProducts');
     }
 
     if (!product) {
